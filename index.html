@@ -326,12 +326,6 @@
         alert(msg);
       }
     };
-
-    function authSuccess(phone, refCode) {
-      localStorage.setItem('sr_ludo_phone', phone);
-      if (refCode) localStorage.setItem('sr_ludo_pending_referral', refCode);
-      location.reload();
-    }
     function authSuccess(phone, refCode) {
       localStorage.setItem('sr_ludo_phone', phone);
       if (refCode) localStorage.setItem('sr_ludo_pending_referral', refCode);
