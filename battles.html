@@ -231,6 +231,11 @@
         <h3 class="title">My Running Battles</h3>
         <div id="runningBattles"></div>
       </section>
+<section class="section">
+        <h3 class="title">All Live Battles (Global)</h3>
+        <div id="allLiveBattles"></div>
+      </section>
+      
     </main>
   </div>
 
@@ -713,7 +718,35 @@ await processReferralCommission(battle.winnerPhone, winAmt);
         </div>
       `).join('');
     }
+// --- YE WALA CODE COPY KAREIN ---
+    function renderAllLiveBattles(data) {
+      const container = document.getElementById('allLiveBattles');
+      // Wo matches jo 'playing' hain aur jisme main (user) nahi khel raha
+      const list = Object.values(data || {}).filter((b) => 
+        b?.status === 'playing' && 
+        b.creatorPhone !== phone && 
+        b.joinerPhone !== phone
+      ).sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
 
+      if (!list.length) {
+        container.innerHTML = '<div class="card muted small">Abhi koi dusra match nahi chal raha hai.</div>';
+        return;
+      }
+
+      container.innerHTML = list.map((b) => `
+        <div class="card" style="border-left: 4px solid var(--accent);">
+          <div class="row space-between">
+            <strong>Battle ₹${b.amount}</strong>
+            <span class="status st-playing">LIVE PLAYING</span>
+          </div>
+          <div class="small muted" style="margin-top:5px;">
+            ${maskPhone(b.creatorPhone)} <span style="color:var(--accent-2)">VS</span> ${maskPhone(b.joinerPhone)}
+          </div>
+          <div class="win-highlight" style="font-size:14px;">Prize: ${fmt(b.winAmount)}</div>
+        </div>
+      `).join('');
+    }
+    // --- CODE KHATAM ---
     createBattleBtn.addEventListener('click', createBattle);
 
     rulesBtn.addEventListener('click', () => showModal(rulesModal));
@@ -775,6 +808,7 @@ await processReferralCommission(battle.winnerPhone, winAmt);
         });
         renderOpenBattles(battlesCache);
         renderRunningBattles(battlesCache);
+        renderAllLiveBattles(battlesCache);
       });
     }
 
