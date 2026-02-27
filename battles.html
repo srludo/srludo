@@ -195,9 +195,50 @@
       display: none;
     }
     .modal.show { display: block; }
+    /* Premium Waiting Parda Design */
+    .waiting-parda {
+      display: none; 
+      position: fixed;
+      inset: 0;
+      background: rgba(4, 9, 19, 0.96);
+      z-index: 9999;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      backdrop-filter: blur(8px);
+    }
+    .waiting-parda.active { display: flex; }
+
+    .premium-gola {
+      width: 60px;
+      height: 60px;
+      border: 4px solid rgba(47, 123, 255, 0.1);
+      border-top: 4px solid #18b3ff;
+      border-radius: 50%;
+      animation: ghumo 1s linear infinite;
+    }
+
+    @keyframes ghumo {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .waiting-text {
+      margin-top: 20px;
+      color: white;
+      font-weight: bold;
+      font-size: 18px;
+    }
   </style>
 </head>
 <body>
+  <div id="parda" class="waiting-parda">
+  <div class="premium-gola"></div>
+  <div class="waiting-text">WAITING FOR JOINER...<br>
+    <span style="font-size:12px; font-weight:normal; opacity:0.7;">Bhai thoda ruko, koi join kar raha hai</span>
+  </div>
+</div>
   <div class="app">
     <header class="sticky-header">
       <a class="back-btn" href="index.html">← Home</a>
@@ -457,6 +498,7 @@ async function processReferralCommission(winnerPhone, winAmount) {
         if (available < amount) throw new Error('Insufficient wallet balance.');
         const deduction = await deductSmartWallet(phone, amount);
         const battleRef = push(ref(db, 'battles'));
+        document.getElementById('parda').classList.add('active');
         await set(battleRef, {
           id: battleRef.key,
           amount,
@@ -477,6 +519,7 @@ async function processReferralCommission(winnerPhone, winAmount) {
 
     async function cancelOpenBattle(battleId) {
   const battleRef = ref(db, `battles/${battleId}`);
+  document.getElementById('parda').classList.add('active');
   const tx = await runTransaction(battleRef, (battle) => {
     if (!battle || battle.status !== 'open' || battle.creatorPhone !== phone) return;
     battle.status = 'cancelled';
@@ -505,6 +548,7 @@ async function processReferralCommission(winnerPhone, winAmount) {
     }
     return user;
   });
+      document.getElementById('parda').classList.remove('active');
 }
 
     async function joinBattle(battleId) {
@@ -766,13 +810,20 @@ await processReferralCommission(battle.winnerPhone, winAmt);
     function syncBattlesRealtime() {
       onValue(ref(db, 'battles'), (snap) => {
         battlesCache = snap.val() || {};
+        
+        let meriBattleOpenHai = false;
         Object.values(battlesCache).forEach((battle) => {
-          if (!battle?.id) return;
-          if (['completed', 'win', 'lost'].includes(battle.status)) {
-            const node = document.getElementById(`running-${battle.id}`);
-            if (node) node.remove();
+          // Check karo: Kya meri koi battle abhi bhi OPEN hai?
+          if (battle.creatorPhone === phone && battle.status === 'open') {
+            meriBattleOpenHai = true;
           }
         });
+
+        // Agar meri koi open battle nahi mil rahi, toh parda hata do
+        if (!meriBattleOpenHai) {
+          document.getElementById('parda').classList.remove('active');
+        }
+
         renderOpenBattles(battlesCache);
         renderRunningBattles(battlesCache);
       });
