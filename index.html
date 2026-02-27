@@ -101,7 +101,9 @@
     </div>
 
     <p id="formTitle" style="color:var(--text-dark); margin-bottom: 10px; font-weight: 600;">Welcome Back!</p>
-
+<div id="usernameWrapper" class="hidden">
+  <input id="loginUser" class="login-input" type="text" placeholder="Apna Poora Naam Dalein">
+</div>
     <input id="loginPhone" class="login-input" type="tel" maxlength="10" placeholder="Mobile Number">
     <input id="loginPass" class="login-input" type="password" placeholder="Password (Min 6 chars)">
     
@@ -297,28 +299,35 @@
     let isLoginMode = true;
 
     // Tab badalne ka function
-    function switchMode(toLogin) {
-      isLoginMode = toLogin;
-      if (isLoginMode) {
-        tabLogin.style.background = 'var(--accent)';
-        tabLogin.style.color = 'white';
-        tabSignup.style.background = 'transparent';
-        tabSignup.style.color = 'var(--text-dark)';
-        referralWrapper.classList.add('hidden');
-        forgotWrapper.classList.remove('hidden');
-        authBtn.textContent = "Login Now";
-        formTitle.textContent = "Welcome Back!";
-      } else {
-        tabSignup.style.background = 'var(--accent)';
-        tabSignup.style.color = 'white';
-        tabLogin.style.background = 'transparent';
-        tabLogin.style.color = 'var(--text-dark)';
-        referralWrapper.classList.remove('hidden');
-        forgotWrapper.classList.add('hidden');
-        authBtn.textContent = "Create Account";
-        formTitle.textContent = "Join the Battle Arena";
-      }
-    }
+    // Ye naya function hai jo dabba dikhayega ya chhupayega
+function switchMode(toLogin) {
+  isLoginMode = toLogin;
+  const usernameWrapper = document.getElementById('usernameWrapper'); // Naam wala dabba
+
+  if (isLoginMode) {
+    tabLogin.style.background = 'var(--accent)';
+    tabLogin.style.color = 'white';
+    tabSignup.style.background = 'transparent';
+    tabSignup.style.color = 'var(--text-dark)';
+    
+    usernameWrapper.classList.add('hidden'); // Login mein naam chhupa do
+    referralWrapper.classList.add('hidden');
+    forgotWrapper.classList.remove('hidden');
+    authBtn.textContent = "Login Now";
+    formTitle.textContent = "Welcome Back!";
+  } else {
+    tabSignup.style.background = 'var(--accent)';
+    tabSignup.style.color = 'white';
+    tabLogin.style.background = 'transparent';
+    tabLogin.style.color = 'var(--text-dark)';
+    
+    usernameWrapper.classList.remove('hidden'); // Register mein naam dikhao
+    referralWrapper.classList.remove('hidden');
+    forgotWrapper.classList.add('hidden');
+    authBtn.textContent = "Create Account";
+    formTitle.textContent = "Join the Battle Arena";
+  }
+}
 
     tabLogin.onclick = () => switchMode(true);
     tabSignup.onclick = () => switchMode(false);
@@ -327,37 +336,55 @@ document.getElementById('highlightSignupBtn').onclick = () => {
   document.getElementById('loginPhone').focus();
 };
     // Main Login/Signup Button Click
-    authBtn.onclick = async () => {
-      if(!termsCheck.checked) {
-          alert("Bhai, pehle Rules maan lo (Tick karein)!");
-          return;
-      }
-      const p = document.getElementById('loginPhone').value.trim();
-      const pass = document.getElementById('loginPass').value.trim();
-      const refCode = document.getElementById('referralCode').value.trim();
+   authBtn.onclick = async () => {
+  if(!termsCheck.checked) {
+      alert("Bhai, pehle Rules maan lo (Tick karein)!");
+      return;
+  }
+  
+  const p = document.getElementById('loginPhone').value.trim();
+  const pass = document.getElementById('loginPass').value.trim();
+  const uname = document.getElementById('loginUser').value.trim(); // Naam uthaya
+  const refCode = document.getElementById('referralCode').value.trim();
 
-      if (p.length !== 10 || pass.length < 6) {
-        alert("Mobile 10 digit ka aur password kam se kam 6 digit ka hona chahiye.");
-        return;
-      }
+  // Basic checking
+  if (p.length !== 10 || pass.length < 6) {
+    alert("Mobile 10 digit ka aur password kam se kam 6 digit ka hona chahiye.");
+    return;
+  }
 
-      const dummyEmail = `${p}@srludo.com`;
-      const finalPhone = "+91" + p;
+  // Agar Register kar raha hai toh naam zaruri hai
+  if (!isLoginMode && uname === "") {
+    alert("Bhai, apna naam toh dalo!");
+    return;
+  }
 
-      try {
-        if (isLoginMode) {
-          await signInWithEmailAndPassword(auth, dummyEmail, pass);
-        } else {
-          await createUserWithEmailAndPassword(auth, dummyEmail, pass);
-        }
-        authSuccess(finalPhone, refCode);
-      } catch (err) {
-        let msg = "Error: " + err.message;
-        if(err.code === 'auth/invalid-credential' || err.code === 'auth/user-not-found') msg = "Mobile number ya Password galat hai!";
-        if(err.code === 'auth/email-already-in-use') msg = "Is number par account pehle se bana hai! Login karein.";
-        alert(msg);
-      }
-    };
+  const dummyEmail = `${p}@srludo.com`;
+  const finalPhone = "+91" + p;
+
+  try {
+    if (isLoginMode) {
+      await signInWithEmailAndPassword(auth, dummyEmail, pass);
+    } else {
+      // Naya account banana
+      await createUserWithEmailAndPassword(auth, dummyEmail, pass);
+      
+      // Database mein naam aur baki detail save karna
+      const userRef = ref(db, `users/${finalPhone}`);
+      await set(userRef, { 
+        phone: finalPhone, 
+        username: uname, // Ye raha tera username jo Firebase mein jayega
+        balance: 0, 
+        win_balance: 0, 
+        kyc_status: 'pending', 
+        time: Date.now() 
+      });
+    }
+    authSuccess(finalPhone, refCode);
+  } catch (err) {
+    alert("Error: " + err.message);
+  }
+};
     function authSuccess(phone, refCode) {
       localStorage.setItem('sr_ludo_phone', phone);
       if (refCode) localStorage.setItem('sr_ludo_pending_referral', refCode);
