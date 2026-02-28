@@ -287,21 +287,78 @@ document.getElementById('withdrawReferralBtn').onclick = async () => {
     } catch(e) { alert(e.message); }
   };
 
-  document.getElementById('submitDepositBtn').onclick = async () => {
+ document.getElementById('submitDepositBtn').onclick = async () => {
     const amount = Number(document.getElementById('depositAmount').value);
     const utr = document.getElementById('utrInput').value.trim();
     const file = document.getElementById('depositSS').files[0];
-    if (!amount || !utr || !file) return alert('Fill all!');
+    const submitBtn = document.getElementById('submitDepositBtn');
+
+    // 1. Basic Check: Kya user ne sab kuch bhara hai?
+    if (!amount || !utr || !file) return alert('Bhai, Amount, UTR aur Screenshot teeno zaruri hain!');
+
+    // Button ko disable karo taaki user baar-baar click na kare
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Checking UTR...';
 
     try {
-      const fd = new FormData(); fd.append('image', file);
-      const resp = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: 'POST', body: fd });
-      const json = await resp.json();
-      const reqRef = push(ref(db, 'deposit_requests'));
-      await set(reqRef, { id: reqRef.key, phone, amount, utr, screenshot: json.data.url, status: 'pending', time: Date.now() });
-      alert('Submitted!'); closeModal(document.getElementById('depositModal')); loadHistory();
-    } catch(e) { alert('Failed'); }
-  };
+        // --- 2. ASLI KAAM: UTR CHECK ---
+        // Hum Firebase mein ek list check kar rahe hain jiska naam 'used_utrs' hai
+        const utrRef = ref(db, `used_utrs/${utr}`);
+        const utrSnap = await get(utrRef);
+
+        if (utrSnap.exists()) {
+            // AGAR PEHLE SE HAI TOH YEH ALERT DIKHEGA
+            alert('❌ Already Submitted! Yeh UTR pehle hi kisi ne submit kar diya hai.');
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Submit';
+            return; // Yahin rok do, aage mat badho
+        }
+
+        // --- 3. AGAR NAYA HAI TOH UPLOAD SHURU ---
+        submitBtn.textContent = 'Uploading...';
+        const fd = new FormData(); 
+        fd.append('image', file);
+        
+        const resp = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: 'POST', body: fd });
+        const json = await resp.json();
+        
+        if(!json.success) throw new Error("Image upload fail ho gaya!");
+
+        // 4. Admin ke liye request bhej rahe hain
+        const reqRef = push(ref(db, 'deposit_requests'));
+        await set(reqRef, { 
+            id: reqRef.key, 
+            phone, 
+            amount, 
+            utr, 
+            screenshot: json.data.url, 
+            status: 'pending', 
+            time: Date.now() 
+        });
+
+        // 5. AB US UTR KO LOCK KAR DO (List mein daal do)
+        // Isse agli baar koi yahi UTR dalega toh woh 'exists' wala alert aayega
+        await set(utrRef, {
+            phone: phone,
+            time: Date.now()
+        });
+
+        alert('✅ Submitted! Admin thodi der mein approve kar dega.');
+        closeModal(document.getElementById('depositModal')); 
+        loadHistory();
+        
+        // Khali kar do boxes ko
+        document.getElementById('depositAmount').value = "";
+        document.getElementById('utrInput').value = "";
+        document.getElementById('depositSS').value = "";
+
+    } catch(e) { 
+        alert('Galti: ' + e.message); 
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit';
+    }
+};
 
   // UI Navigation
   document.getElementById('methodUpiBtn').onclick = () => { currentMethod = 'UPI'; renderWithdrawMethodInfo(); };
