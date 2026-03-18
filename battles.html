@@ -534,6 +534,7 @@ async function processReferralCommission(winnerPhone, winAmount) {
         const deduction = await deductSmartWallet(phone, Number(battle.amount));
         await update(battleRef, {
           status: 'playing',
+          timerStart: Date.now(), // Timer yahan se shuru hua
           joinerDeduct: deduction,
           startedAt: Date.now(),
           updatedAt: Date.now()
@@ -678,6 +679,13 @@ await processReferralCommission(battle.winnerPhone, winAmt);
 
       const roomCode = b.room_code || b.roomCode || '';
       const roomLocked = Boolean(roomCode);
+      let timerHtml = '';
+      if (meJoiner && !roomCode) {
+          timerHtml = `<div class="small" style="color:var(--warn); text-align:center; padding:10px; background:rgba(255,179,74,0.05); border-radius:10px; margin-bottom:10px;">
+              ⏳ Waiting for Room Code...<br>
+              <span style="font-size:10px;">(Auto-cancel in 3:30 mins)</span>
+          </div>`;
+      }
       const roomInput = meCreator
         ? `<div class="row" style="margin-top:8px;">
             <input class="input" id="room-${b.id}" placeholder="Enter Room Code" value="${roomCode}" ${roomLocked ? 'disabled' : ''} />
@@ -857,6 +865,60 @@ document.querySelector('[data-close-modal="cancelModal"]').addEventListener('cli
     document.getElementById('cancelModal').classList.remove('show');
     document.getElementById('overlay').classList.remove('show');
 });
+    // --- AUTO CANCEL TIMER LOGIC ---
+
+setInterval(async () => {
+    const now = Date.now();
+    // Saari battles ko check karo
+    Object.values(battlesCache).forEach(async (b) => {
+        // Agar match chal raha hai aur abhi tak Room Code nahi dala gaya hai
+        if (b.status === 'playing' && !(b.room_code || b.roomCode) && b.timerStart) {
+            
+            const diff = now - b.timerStart;
+            const timeLimit = 210000; // 3 minute 30 second (milli-seconds mein)
+
+            // Agar 3:30 beet gaye hain toh
+            if (diff > timeLimit) {
+                // Sirf ek baar cancel trigger ho (Creator ya Joiner ke phone se)
+                if (phone === b.creatorPhone || phone === b.joinerPhone) {
+                    await autoCancelMatch(b.id);
+                }
+            }
+        }
+    });
+}, 5000); // Har 5 second mein check karega
+
+// Table cancel karne aur paisa wapas dene wala function
+async function autoCancelMatch(battleId) {
+    const battleRef = ref(db, `battles/${battleId}`);
+    const tx = await runTransaction(battleRef, (battle) => {
+        // Agar match abhi bhi bina code ke hai toh hi cancel karo
+        if (!battle || battle.status !== 'playing' || (battle.room_code || battle.roomCode)) return;
+        battle.status = 'cancelled_timeout';
+        battle.updatedAt = Date.now();
+        return battle;
+    });
+
+    if (tx.committed) {
+        const b = tx.snapshot.val();
+        // Dono players ko unka paisa wapas do
+        if (b.creatorPhone) await refundPlayer(b.creatorPhone, b.creatorDeduct);
+        if (b.joinerPhone) await refundPlayer(b.joinerPhone, b.joinerDeduct);
+        console.log("Match Auto-Cancelled due to timeout.");
+    }
+}
+
+// Paisa wapas bhejne ka helper function
+async function refundPlayer(userPhone, deductData) {
+    await runTransaction(ref(db, `users/${userPhone}`), (user) => {
+        if (!user) return user;
+        if (deductData) {
+            user.win_balance = (user.win_balance || 0) + (deductData.fromWin || 0);
+            user.balance = (user.balance || 0) + (deductData.fromCash || 0);
+        }
+        return user;
+    });
+}
   </script>
   <section id="cancelModal" class="modal">
     <h3 class="title">Bhai, Kya Hua?</h3>
