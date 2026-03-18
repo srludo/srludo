@@ -824,6 +824,53 @@ await processReferralCommission(battle.winnerPhone, winAmt);
         syncWalletRealtime();      // Paise (Wallet) dikhana shuru karo
         syncBattlesRealtime();     // Battles dikhana shuru karo
     }
+    // --- CANCEL & WHATSAPP LOGIC ---
+
+// 1. Jab koi "I CANCEL" button dabaye toh dabba dikhao
+document.body.addEventListener('click', (event) => {
+    const btn = event.target.closest('button[data-action="i-cancel"]');
+    if (btn) {
+        const modal = document.getElementById('cancelModal');
+        modal.classList.add('show'); 
+        document.getElementById('overlay').classList.add('show'); 
+        // Table ID yaad rakhne ke liye
+        window.currentCancelId = btn.dataset.id;
+    }
+});
+
+// 2. Jab "WhatsApp Pe Bhejo" dabaye toh message bhejo
+document.getElementById('sendCancelWhatsApp').addEventListener('click', () => {
+    const reason = document.getElementById('cancelReason').value;
+    const tableId = window.currentCancelId || "N/A";
+    const adminNum = "+918815599818"; 
+    
+    const text = `🚨 *MATCH CANCEL REPORT* 🚨%0A%0A*Table ID:* ${tableId}%0A*Player:* ${phone}%0A*Reason:* ${reason}`;
+    
+    window.open(`https://wa.me/${adminNum}?text=${text}`, '_blank');
+    
+    document.getElementById('cancelModal').classList.remove('show');
+    document.getElementById('overlay').classList.remove('show');
+});
+
+// 3. Band karo button ke liye
+document.querySelector('[data-close-modal="cancelModal"]').addEventListener('click', () => {
+    document.getElementById('cancelModal').classList.remove('show');
+    document.getElementById('overlay').classList.remove('show');
+});
   </script>
+  <section id="cancelModal" class="modal">
+    <h3 class="title">Bhai, Kya Hua?</h3>
+    <p class="small muted">Admin ko batane ke liye ek reason chuno:</p>
+    
+    <select id="cancelReason" class="input" style="margin-top:10px; background: #102340; color: white;">
+        <option value="Opponent start nahi kar raha">Opponent start nahi kar raha</option>
+        <option value="Galat Room Code diya hai">Galat Room Code diya hai</option>
+        <option value="Mujhe cancel karna hai">Mujhe cancel karna hai (Personal Reason)</option>
+        <option value="Technical Issue / Game Stuck">Technical Issue / Game Stuck</option>
+    </select>
+
+    <button id="sendCancelWhatsApp" class="btn btn-gold full" style="margin-top:15px;">WhatsApp Pe Bhejo</button>
+    <button class="btn-muted full" style="margin-top:8px;" data-close-modal="cancelModal">Band Karo</button>
+</section>
 </body>
 </html>
