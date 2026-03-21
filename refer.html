@@ -121,8 +121,10 @@
 
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-    import { getDatabase, ref, onValue, get } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
+    import { getDatabase, ref, onValue } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
+    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 
+    // 1. Aapka Firebase Configuration
     const firebaseConfig = {
       apiKey: 'AIzaSyAx0fr47IsOtBxakcBj1ndwDYle_XlaE-Y',
       authDomain: 'sr-ludo-4440b.firebaseapp.com',
@@ -133,41 +135,58 @@
       appId: '1:1080387235822:web:77faea231641837950e8ff'
     };
 
+    // 2. Firebase ko start karna
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
-    const phone = localStorage.getItem('sr_ludo_phone');
+    const auth = getAuth(app);
 
-    if (!phone) { window.location.href = 'index.html'; }
-
-    // ✅ Match Profile Logic: Using last 6 digits as referral code
-    const referralCode = phone.replace(/\D/g, '').slice(-6) || '000000';
-    const myReferLink = `${window.location.origin}/index.html?ref=${referralCode}`;
-    
-    document.getElementById('referLink').innerText = myReferLink;
-
-    // Realtime Stats from Firebase
-    onValue(ref(db, `users/${phone}`), (snap) => {
-      const data = snap.val() || {};
-      document.getElementById('totalEarnings').innerText = `₹${data.referral_earnings_total || 0}`;
+    // 3. Login Check Karne Wala Logic
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // Agar user login hai, toh uska number nikal lo (Jaise index.html mein kiya tha)
+        const emailPart = user.email.split('@')[0];
+        const finalPhone = (emailPart.length === 10) ? "+91" + emailPart : emailPart;
+        
+        // Data load karo
+        startReferralSystem(finalPhone);
+      } else {
+        // Agar login nahi hai, toh seedha index.html (Login Page) par bhej do
+        window.location.href = 'index.html';
+      }
     });
 
-    onValue(ref(db, `referrals/${phone}`), (snap) => {
-      const refs = snap.val() || {};
-      document.getElementById('totalReferrals').innerText = Object.keys(refs).length;
-    });
+    // 4. Referral ka sara kaam karne wala function
+    function startReferralSystem(phone) {
+      // Link banana (Last 6 digits use karke)
+      const referralCode = phone.replace(/\D/g, '').slice(-6) || '000000';
+      const myReferLink = `${window.location.origin}/index.html?ref=${referralCode}`;
+      document.getElementById('referLink').innerText = myReferLink;
 
-    // WhatsApp Action
-    document.getElementById('whatsappBtn').onclick = () => {
-      const msg = `*SR LUDO* 🏆\n\nBhai, is platform par ludo khelo 100% safe and trustable hai aur yaha toh refer karne ka lifetime paisa milta hai 2% commision abhi aa jao me bhi yahi khelta hu withdrawl bhi 15 minutes ke andar aa jata hai ✅\n\nJoin here: ${myReferLink}`;
-      window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
-    };
-
-    // Copy Action
-    document.getElementById('copyBtn').onclick = () => {
-      navigator.clipboard.writeText(myReferLink).then(() => {
-        alert('Referral link copied!');
+      // Firebase se kamai (Earnings) dikhana
+      onValue(ref(db, `users/${phone}`), (snap) => {
+        const data = snap.val() || {};
+        document.getElementById('totalEarnings').innerText = `₹${data.referral_earnings_total || 0}`;
       });
-    };
-  </script>
+
+      // Kitne doston ne join kiya wo dikhana
+      onValue(ref(db, `referrals/${phone}`), (snap) => {
+        const refs = snap.val() || {};
+        document.getElementById('totalReferrals').innerText = Object.keys(refs).length;
+      });
+
+      // WhatsApp share button
+      document.getElementById('whatsappBtn').onclick = () => {
+        const msg = `*SR LUDO* 🏆\n\nBhai, is platform par ludo khelo 100% safe hai aur yaha refer karne ka lifetime 2% commission milta hai! ✅\n\nJoin here: ${myReferLink}`;
+        window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+      };
+
+      // Copy Link button
+      document.getElementById('copyBtn').onclick = () => {
+        navigator.clipboard.writeText(myReferLink).then(() => {
+          alert('Referral link copy ho gaya!');
+        });
+      };
+    }
+</script>
 </body>
 </html>
