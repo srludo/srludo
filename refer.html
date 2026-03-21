@@ -18,11 +18,11 @@
       margin: 0; font-family: 'Inter', sans-serif;
       background: radial-gradient(1200px 500px at 50% -200px, #154b99 0%, var(--bg) 65%);
       color: var(--text); min-height: 100vh;
+      display: none; /* Auth check hone tak hide rakhenge */
     }
     .app { max-width: 540px; margin: 0 auto; padding-bottom: 40px; }
     .header { padding: 20px; display: flex; align-items: center; gap: 15px; background: rgba(0,0,0,0.2); }
     .back-btn { text-decoration: none; color: white; font-size: 20px; border: 1px solid var(--line); padding: 5px 12px; border-radius: 10px; }
-    
     .hero-card {
       margin: 20px; padding: 30px 20px; text-align: center;
       background: linear-gradient(160deg, var(--card), var(--card-2));
@@ -31,20 +31,18 @@
     }
     .hero-card h2 { margin: 10px 0; color: var(--gold-2); font-size: 28px; }
     .hero-card p { color: var(--muted); font-size: 14px; line-height: 1.5; }
-
     .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 0 20px; }
     .stat-box {
       background: rgba(255,255,255,0.03); border: 1px solid var(--line);
       padding: 15px; border-radius: 16px; text-align: center;
     }
     .stat-box strong { display: block; font-size: 20px; color: var(--ok); margin-top: 5px; }
-
     .share-section { margin: 25px 20px; text-align: center; }
     .refer-link-box {
       background: #08162c; border: 1px dashed var(--accent);
       padding: 15px; border-radius: 12px; margin-bottom: 15px;
       font-weight: 600; font-size: 14px; word-break: break-all;
-      color: var(--gold-2);
+      color: var(--gold-2); min-height: 50px;
     }
     .btn {
       width: 100%; padding: 16px; border-radius: 14px; border: 0;
@@ -53,34 +51,23 @@
     }
     .btn-whatsapp { background: #25D366; color: white; }
     .btn-copy { background: var(--accent); color: white; }
-
     .rules { margin: 20px; padding: 20px; background: rgba(255,255,255,0.02); border-radius: 16px; }
     .rules h4 { margin-top: 0; color: var(--gold-2); }
     .rules li { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
     .kyc-notice {
-      margin: 20px;
-      padding: 12px 15px;
-      background: rgba(255, 61, 77, 0.1); /* Halka laal background */
-      border-left: 4px solid var(--accent);
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
+      margin: 20px; padding: 12px 15px;
+      background: rgba(255, 61, 77, 0.1); border-left: 4px solid var(--accent);
+      border-radius: 8px; display: flex; align-items: center; gap: 10px;
     }
-    .kyc-notice span {
-      font-size: 13px;
-      font-weight: 600;
-      color: #ff9da5; /* Light Red/Pinkish for highlight */
-    }
-    .kyc-icon { font-size: 18px; }
+    .kyc-notice span { font-size: 13px; font-weight: 600; color: #ff9da5; }
   </style>
 </head>
 <body>
 
   <div class="app">
     <div class="kyc-notice">
-      <div class="kyc-icon">⚠️</div>
-      <span>Refer And Earn Ke Liye Aapko KYC Karna Jaruri Hai Yadi Nahi Hai Toh</span>
+      <div style="font-size: 18px;">⚠️</div>
+      <span>Refer And Earn Ke Liye Aapko KYC Karna Jaruri Hai</span>
     </div>
     <div class="header">
       <a href="index.html" class="back-btn">←</a>
@@ -100,11 +87,9 @@
 
     <div class="share-section">
       <p style="color:var(--muted); font-size: 12px;">Your Personal Referral Link</p>
-      <div class="refer-link-box" id="referLink">Generating Link...</div>
+      <div class="refer-link-box" id="referLink">Loading link...</div>
       
-      <button class="btn btn-whatsapp" id="whatsappBtn">
-        Share on WhatsApp
-      </button>
+      <button class="btn btn-whatsapp" id="whatsappBtn">Share on WhatsApp</button>
       <button class="btn btn-copy" id="copyBtn">Copy Link</button>
     </div>
 
@@ -124,7 +109,6 @@
     import { getDatabase, ref, onValue } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
     import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 
-    // 1. Aapka Firebase Configuration
     const firebaseConfig = {
       apiKey: 'AIzaSyAx0fr47IsOtBxakcBj1ndwDYle_XlaE-Y',
       authDomain: 'sr-ludo-4440b.firebaseapp.com',
@@ -135,58 +119,50 @@
       appId: '1:1080387235822:web:77faea231641837950e8ff'
     };
 
-    // 2. Firebase ko start karna
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
     const auth = getAuth(app);
 
-    // 3. Login Check Karne Wala Logic
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        // Agar user login hai, toh uska number nikal lo (Jaise index.html mein kiya tha)
         const emailPart = user.email.split('@')[0];
         const finalPhone = (emailPart.length === 10) ? "+91" + emailPart : emailPart;
-        
-        // Data load karo
+        document.body.style.display = "block"; // Show page after auth
         startReferralSystem(finalPhone);
       } else {
-        // Agar login nahi hai, toh seedha index.html (Login Page) par bhej do
         window.location.href = 'index.html';
       }
     });
 
-    // 4. Referral ka sara kaam karne wala function
     function startReferralSystem(phone) {
-      // Link banana (Last 6 digits use karke)
       const referralCode = phone.replace(/\D/g, '').slice(-6) || '000000';
-      const myReferLink = `${window.location.origin}/index.html?ref=${referralCode}`;
+      
+      // ✅ 404 Fix: Automatic URL generation
+      const loc = window.location;
+      const path = loc.pathname.substring(0, loc.pathname.lastIndexOf('/'));
+      const myReferLink = loc.origin + path + "/index.html?ref=" + referralCode;
+      
       document.getElementById('referLink').innerText = myReferLink;
 
-      // Firebase se kamai (Earnings) dikhana
       onValue(ref(db, `users/${phone}`), (snap) => {
         const data = snap.val() || {};
-        document.getElementById('totalEarnings').innerText = `₹${data.referral_earnings_total || 0}`;
+        document.getElementById('totalEarnings').innerText = "₹" + (data.referral_earnings_total || 0);
       });
 
-      // Kitne doston ne join kiya wo dikhana
       onValue(ref(db, `referrals/${phone}`), (snap) => {
         const refs = snap.val() || {};
         document.getElementById('totalReferrals').innerText = Object.keys(refs).length;
       });
 
-      // WhatsApp share button
       document.getElementById('whatsappBtn').onclick = () => {
-        const msg = `*SR LUDO* 🏆\n\nBhai, is platform par ludo khelo 100% safe hai aur yaha refer karne ka lifetime 2% commission milta hai! ✅\n\nJoin here: ${myReferLink}`;
-        window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+        const msg = "*SR LUDO* 🏆\n\nBhai, is platform par ludo khelo 100% safe hai aur lifetime 2% commission milta hai! ✅\n\nJoin here: " + myReferLink;
+        window.open("https://wa.me/?text=" + encodeURIComponent(msg), '_blank');
       };
 
-      // Copy Link button
       document.getElementById('copyBtn').onclick = () => {
-        navigator.clipboard.writeText(myReferLink).then(() => {
-          alert('Referral link copy ho gaya!');
-        });
+        navigator.clipboard.writeText(myReferLink).then(() => alert('Referral link copy ho gaya!'));
       };
     }
-</script>
+  </script>
 </body>
 </html>
