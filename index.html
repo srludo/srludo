@@ -3,44 +3,243 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SR LUDO - खेलें और जीतें</title>
+    <title>SR LUDO - Premium Online Battle Arena</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Montserrat:wght@800&display=swap" rel="stylesheet">
+    
     <style>
-        body { margin: 0; font-family: 'Inter', sans-serif; background: #040913; color: white; text-align: center; }
-        .hero { padding: 50px 20px; background: linear-gradient(to bottom, #154b99, #040913); }
-        .logo { height: 100px; margin-bottom: 20px; }
-        h1 { font-size: 28px; color: #ffd05a; }
-        p { color: #9fb0d1; line-height: 1.6; }
-        .btn-play { 
-            display: inline-block; padding: 15px 40px; background: #2f7bff; 
-            color: white; text-decoration: none; border-radius: 50px; 
-            font-weight: bold; font-size: 18px; margin-top: 20px;
-            box-shadow: 0 4px 15px rgba(47, 123, 255, 0.4);
+        :root {
+            --bg-dark: #040913;
+            --bg-card: #0d1b33;
+            --accent: #2f7bff;
+            --accent-glow: rgba(47, 123, 255, 0.5);
+            --gold: #ffd05a;
+            --gold-glow: rgba(255, 208, 90, 0.4);
+            --text-main: #e8efff;
+            --text-muted: #9fb0d1;
         }
-        .features { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 30px; }
-        .f-card { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; font-size: 14px; }
+
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            overflow-x: hidden;
+            text-align: center;
+        }
+
+        /* Gradient Background with Radial Effect */
+        .main-container {
+            background: radial-gradient(circle at 50% -20%, #1a3c75 0%, var(--bg-dark) 60%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* --- Hero Section --- */
+        .hero { padding: 60px 20px 40px; }
+
+        .logo-container {
+            display: inline-block;
+            position: relative;
+            margin-bottom: 25px;
+        }
+        
+        .main-logo {
+            height: 120px;
+            filter: drop-shadow(0 0 15px var(--accent-glow));
+            animation: logoFloat 4s ease-in-out infinite;
+        }
+
+        .premium-tag {
+            position: absolute; top: -10px; right: -30px;
+            background: linear-gradient(135deg, var(--gold), #a86b00);
+            color: #1f1711; font-size: 10px; font-weight: 800;
+            padding: 3px 8px; border-radius: 50px;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+
+        h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 36px; font-weight: 800;
+            background: linear-gradient(180deg, #fff 0%, #a8cfff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0 0 15px;
+            letter-spacing: -1px;
+        }
+
+        .hero-p {
+            font-size: 15px; color: var(--text-muted);
+            max-width: 400px; margin: 0 auto 35px;
+            line-height: 1.6; font-weight: 400;
+        }
+
+        /* --- Premium CTA Button --- */
+        .btn-premium {
+            display: inline-block;
+            padding: 18px 50px;
+            background: linear-gradient(135deg, #2f7bff, #154b99);
+            color: white; font-weight: 700; font-size: 18px;
+            text-decoration: none; border-radius: 50px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4), 
+                        0 0 30px var(--accent-glow);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 1px;
+        }
+
+        .btn-premium:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5), 
+                        0 0 40px var(--accent-glow);
+        }
+
+        /* Shine Effect on Button */
+        .btn-premium::after {
+            content: '';
+            position: absolute; top: -50%; left: -100%;
+            width: 100%; height: 200%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(30deg);
+            transition: all 0.6s ease;
+        }
+
+        .btn-premium:hover::after { left: 150%; }
+
+        /* --- Features Section --- */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            max-width: 500px;
+            margin: 40px auto 50px;
+            padding: 0 10px;
+        }
+
+        .f-card {
+            background: var(--bg-card);
+            padding: 20px 15px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: border-color 0.3s ease;
+            cursor: default;
+        }
+
+        .f-card:hover { border-color: var(--accent); }
+
+        .f-icon { font-size: 28px; margin-bottom: 10px; display: block; }
+        
+        .f-card h3 { 
+            font-size: 14px; color: var(--gold); 
+            margin: 0 0 5px; font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        
+        .f-card p { font-size: 11px; color: var(--text-muted); margin: 0; line-height: 1.4; }
+
+        /* --- Footer Section --- */
+        .footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 30px 20px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .footer-links { margin-bottom: 15px; }
+        
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 12px;
+            margin: 0 10px;
+            font-weight: 500;
+        }
+
+        .footer-links a:hover { color: white; }
+
+        .strict-warning {
+            font-size: 11px;
+            color: #ff3d4d;
+            background: rgba(255, 61, 77, 0.08);
+            border: 1px solid rgba(255, 61, 77, 0.2);
+            padding: 8px 15px;
+            border-radius: 8px;
+            display: inline-block;
+            margin-top: 10px;
+            font-weight: 600;
+        }
+
+        /* --- Animations --- */
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        /* --- Responsive Mobile First --- */
+        @media (min-width: 540px) {
+            h1 { font-size: 42px; }
+            .main-logo { height: 140px; }
+            .hero-p { font-size: 16px; }
+        }
     </style>
 </head>
 <body>
 
-    <div class="hero">
-        <img src="logo.png" class="logo" alt="SR Ludo Logo">
-        <h1>Welcome to SR LUDO Arena</h1>
-        <p>भारत का सबसे भरोसेमंद लूडो प्लेटफॉर्म। <br> अपनी स्किल्स दिखाएं और दोस्तों के साथ खेलें।</p>
-        
-        <a href="app.html" class="btn-play">LOGIN TO PLAY ➔</a>
-    </div>
+    <div class="main-container">
+        <header class="hero">
+            <div class="logo-container">
+                <img src="logo.png" alt="SR Ludo Logo" class="main-logo">
+                <span class="premium-tag">PREMIUM</span>
+            </div>
+            
+            <h1>SR LUDO Battle Arena</h1>
+            
+            <p class="hero-p">
+                भारत का सबसे भरोसेमंद और रोमांचक लूडो प्लेटफॉर्म। अपनी स्किल्स दिखाएं, दोस्तों से मुकाबला करें और बनें असली लूडो मास्टर।
+            </p>
+            
+            <a href="app.html" class="btn-premium">
+                ENTER ARENA ➔
+            </a>
+        </header>
 
-    <div class="features">
-        <div class="f-card">✅ 100% Safe & Secure</div>
-        <div class="f-card">🚀 Instant Support</div>
-        <div class="f-card">🎮 Classic Gameplay</div>
-        <div class="f-card">🏆 Daily Tournaments</div>
-    </div>
+        <section class="features">
+            <div class="f-card">
+                <span class="f-icon">🛡️</span>
+                <h3>100% Secure</h3>
+                <p>Advanced anti-cheat and safe data handling.</p>
+            </div>
+            <div class="f-card">
+                <span class="f-icon">⚡</span>
+                <h3>Instant Play</h3>
+                <p>No waiting, start playing in seconds.</p>
+            </div>
+            <div class="f-card">
+                <span class="f-icon">🏆</span>
+                <h3>Premium Gameplay</h3>
+                <p>Smooth graphics and iconic ludo interface.</p>
+            </div>
+            <div class="f-card">
+                <span class="f-icon">📞</span>
+                <h3>24/7 Support</h3>
+                <p>Our team is always here for your help.</p>
+            </div>
+        </section>
 
-    <div style="padding: 20px; font-size: 10px; color: #555;">
-        <a href="privacy.html" style="color: #9fb0d1;">Privacy Policy</a> | 
-        <a href="terms.html" style="color: #9fb0d1;">Terms of Service</a>
-        <p>18+ Only. Not for Assam, Odisha, and restricted states.</p>
+        <footer class="footer">
+            <div class="footer-links">
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="terms.html">Terms of Service</a>
+            </div>
+            
+            <p style="font-size: 11px; color: var(--text-muted); margin: 0 0 10px;">
+                © 2024 SR Ludo Inc. All Rights Reserved.
+            </p>
+            
+            <div class="strict-warning">
+                STRICTLY 18+ | Not for residents of Assam, Odisha, and Restricted States.
+            </div>
+        </footer>
     </div>
 
 </body>
