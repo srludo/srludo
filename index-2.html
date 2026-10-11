@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#101827">
+  <meta name="description" content="RTS LUDO website maintenance par hai. Hum jald hi wapas aayenge.">
+  <title>RTS LUDO — Under Maintenance</title>
+  <style>
+    :root {
+      --bg: #0b1220;
+      --panel: rgba(20, 31, 51, .82);
+      --gold: #f5c451;
+      --gold-light: #ffe7a0;
+      --text: #f7f8fc;
+      --muted: #b7c0d1;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      color: var(--text);
+      font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(circle at 15% 15%, rgba(245,196,81,.15), transparent 28%),
+        radial-gradient(circle at 85% 85%, rgba(49,115,210,.18), transparent 32%),
+        linear-gradient(135deg, #080d17 0%, #111d31 55%, #0a1220 100%);
+      overflow-x: hidden;
+    }
+    .glow {
+      position: fixed;
+      width: 260px; height: 260px;
+      border: 1px solid rgba(245,196,81,.13);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .glow.one { top: -130px; right: -80px; }
+    .glow.two { bottom: -150px; left: -90px; width: 340px; height: 340px; }
+    .card {
+      position: relative;
+      width: min(100%, 680px);
+      padding: clamp(28px, 6vw, 58px);
+      text-align: center;
+      border: 1px solid rgba(255,255,255,.11);
+      border-radius: 28px;
+      background: var(--panel);
+      box-shadow: 0 24px 80px rgba(0,0,0,.38), inset 0 1px 0 rgba(255,255,255,.06);
+      backdrop-filter: blur(14px);
+      animation: rise .7s ease-out both;
+    }
+    .logo-wrap {
+      width: 108px; height: 108px;
+      margin: 0 auto 22px;
+      display: grid; place-items: center;
+      border-radius: 25px;
+      padding: 10px;
+      background: linear-gradient(145deg, rgba(245,196,81,.18), rgba(255,255,255,.04));
+      border: 1px solid rgba(245,196,81,.4);
+      box-shadow: 0 0 36px rgba(245,196,81,.12);
+    }
+    .logo { max-width: 100%; max-height: 100%; object-fit: contain; }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 9px;
+      padding: 8px 13px; border-radius: 999px;
+      color: var(--gold-light); background: rgba(245,196,81,.1);
+      border: 1px solid rgba(245,196,81,.25);
+      text-transform: uppercase; letter-spacing: 1.5px;
+      font-size: 11px; font-weight: 800;
+    }
+    .dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--gold); box-shadow: 0 0 12px var(--gold);
+      animation: pulse 1.5s infinite;
+    }
+    h1 {
+      margin: 22px 0 12px;
+      font-size: clamp(29px, 6vw, 45px);
+      line-height: 1.12; letter-spacing: -.8px;
+    }
+    h1 span { color: var(--gold); }
+    .subtitle {
+      margin: 0 auto;
+      max-width: 510px;
+      color: var(--muted);
+      font-size: clamp(15px, 2.5vw, 17px);
+      line-height: 1.85;
+    }
+    .divider {
+      width: 68px; height: 3px; margin: 25px auto;
+      border-radius: 3px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+    .status {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      margin: 0 auto 22px; color: #e9edf5; font-size: 13px;
+    }
+    .spinner {
+      width: 17px; height: 17px; border-radius: 50%;
+      border: 2px solid rgba(245,196,81,.22);
+      border-top-color: var(--gold);
+      animation: spin 1s linear infinite;
+    }
+    .thanks {
+      margin-top: 26px; padding-top: 20px;
+      border-top: 1px solid rgba(255,255,255,.09);
+      color: #d8deea; font-size: 13px; line-height: 1.7;
+    }
+    .thanks strong { color: var(--gold-light); }
+    footer { margin-top: 22px; color: #77849a; font-size: 11px; letter-spacing: .5px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes pulse { 50% { opacity: .4; transform: scale(.8); } }
+    @keyframes rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    @media (max-width: 480px) {
+      body { padding: 16px; }
+      .card { border-radius: 22px; }
+      .logo-wrap { width: 90px; height: 90px; border-radius: 21px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="glow one"></div>
+  <div class="glow two"></div>
+
+  <main class="card">
+    <div class="logo-wrap">
+      <img class="logo" src="logo.png" alt="RTS LUDO Logo"
+           onerror="this.style.display='none'; document.getElementById('logoFallback').style.display='block';">
+      <span id="logoFallback" style="display:none;color:#f5c451;font-weight:900;font-size:24px;">RTS<br>LUDO</span>
+    </div>
+
+    <div class="eyebrow"><span class="dot"></span> Scheduled Maintenance</div>
+    <h1>RTS LUDO <span>Family</span></h1>
+    <div class="divider"></div>
+
+    <p class="subtitle">
+      Aapki sevaon ko aur behtar banane ke liye hamari team website par
+      maintenance aur management ka kaam kar rahi hai.
+      Is dauraan website kuch samay ke liye band rahegi.
+    </p>
+
+    <div class="divider"></div>
+    <div class="status"><span class="spinner"></span> Hum jald hi wapas aayenge</div>
+
+    <div class="thanks">
+      Asuvidha ke liye humein khed hai.<br>
+      Aapke sahyog aur vishwas ke liye <strong>dhanyavaad!</strong>
+    </div>
+    <footer>© <span id="year"></span> RTS LUDO · THANK YOU FOR YOUR PATIENCE</footer>
+  </main>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
