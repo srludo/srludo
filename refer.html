@@ -85,6 +85,11 @@
       <div class="stat-box">Total Earned<strong id="totalEarnings">₹0</strong></div>
     </div>
 
+    <div class="rules" style="margin-top:20px;">
+      <h4>Your Referral Activity</h4>
+      <div id="referralActivity" style="font-size:13px;color:var(--muted);">Loading referral activity...</div>
+    </div>
+
     <div class="share-section">
       <p style="color:var(--muted); font-size: 12px;">Your Personal Referral Link</p>
       <div class="refer-link-box" id="referLink">Loading link...</div>
@@ -99,7 +104,7 @@
         <li>Share your unique link with friends.</li>
         <li>When they join via link, they are automatically linked to you.</li>
         <li>Earn 2% of their winning amount every time they win a battle.</li>
-        <li>Earnings are credited directly to your cash wallet.</li>
+        <li>Commission is credited to your Referral Wallet. Transfer it to your Cash Wallet from the Wallet page.</li>
       </ul>
     </div>
   </div>
@@ -135,7 +140,7 @@
     });
 
     function startReferralSystem(phone) {
-      const referralCode = phone.replace(/\D/g, '').slice(-6) || '000000';
+      const referralCode = phone.replace(/\D/g, '').slice(-10) || '0000000000';
       
       // ✅ 404 Fix: Automatic URL generation
       const loc = window.location;
@@ -152,10 +157,41 @@
       onValue(ref(db, `referrals/${phone}`), (snap) => {
         const refs = snap.val() || {};
         document.getElementById('totalReferrals').innerText = Object.keys(refs).length;
+        renderReferralActivity(refs);
       });
 
+      onValue(ref(db, `referral_payouts/${phone}`), (snap) => {
+        const payouts = snap.val() || {};
+        renderReferralActivity(null, payouts);
+      });
+
+      let referralFriends = {};
+      let referralPayouts = {};
+      function renderReferralActivity(friends, payouts) {
+        if (friends !== null && friends !== undefined) referralFriends = friends;
+        if (payouts !== null && payouts !== undefined) referralPayouts = payouts;
+        const perFriend = {};
+        Object.values(referralPayouts).forEach((p) => {
+          if (!p || !p.fromPlayer) return;
+          const key = p.fromPlayer;
+          if (!perFriend[key]) perFriend[key] = { earned: 0, wins: 0, latest: 0 };
+          perFriend[key].earned += Number(p.commissionAmount || 0);
+          perFriend[key].wins += 1;
+          perFriend[key].latest = Math.max(perFriend[key].latest, Number(p.time || 0));
+        });
+        const rows = Object.entries(referralFriends).map(([key, friend]) => {
+          const fullPhone = String(friend?.phone || key);
+          const digits = fullPhone.replace(/\D/g, '');
+          const masked = digits.length >= 4 ? '******' + digits.slice(-4) : 'Referred player';
+          const stats = perFriend[fullPhone] || perFriend[key] || { earned: 0, wins: 0, latest: 0 };
+          return `<div style="padding:11px 0;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;"><div><strong style="color:var(--text);">${masked}</strong><div style="font-size:11px;margin-top:4px;">Joined ${friend?.joinedAt ? new Date(friend.joinedAt).toLocaleDateString('en-IN') : '—'} · ${stats.wins} credited win(s)</div></div><strong style="color:var(--ok);white-space:nowrap;">₹${stats.earned}</strong></div>`;
+        });
+        const el = document.getElementById('referralActivity');
+        if (el) el.innerHTML = rows.length ? rows.join('') : 'No referred players yet. Share your referral link to get started.';
+      }
+
       document.getElementById('whatsappBtn').onclick = () => {
-        const msg = "*RTS* 🏆\n\nBhai, is platform par ludo khelo 100% safe hai aur lifetime 2% commission milta hai! ✅\n\nJoin here: " + myReferLink;
+        const msg = "*RTS LUDO* 🏆\n\nJoin using my referral link. I can earn commission on eligible wins as per platform rules.\n\nJoin here: " + myReferLink;
         window.open("https://wa.me/?text=" + encodeURIComponent(msg), '_blank');
       };
 
