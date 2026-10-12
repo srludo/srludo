@@ -458,9 +458,9 @@ async function processReferralCommission(winnerPhone, winAmount) {
 
       createBattleBtn.disabled = true;
       try {
+        // Creation only publishes a table; wallet deduction happens when a match is confirmed.
         const available = Number(myUser.win_balance || 0) + Number(myUser.balance || 0);
-        if (available < amount) throw new Error('Insufficient wallet balance.');
-        const deduction = await deductSmartWallet(phone, amount);
+        if (available < amount) throw new Error('Insufficient wallet balance for this battle amount.');
         const battleRef = push(ref(db, 'battles'));
         await set(battleRef, {
           id: battleRef.key,
@@ -468,7 +468,6 @@ async function processReferralCommission(winnerPhone, winAmount) {
           winAmount: computeWinAmount(amount),
           status: 'open',
           creatorPhone: phone,
-          creatorDeduct: deduction,
           createdAt: Date.now(),
           updatedAt: Date.now()
         });
@@ -480,37 +479,59 @@ async function processReferralCommission(winnerPhone, winAmount) {
       }
     }
 
-    async function cancelOpenBattle(battleId) {
-  const battleRef = ref(db, `battles/${battleId}`);
-  const tx = await runTransaction(battleRef, (battle) => {
-    if (!battle || battle.status !== 'open' || battle.creatorPhone !== phone) return;
-    battle.status = 'cancelled';
-    battle.cancelledAt = Date.now();
-    battle.updatedAt = Date.now();
-    return battle;
-  });
-
-  if (!tx.committed) {
-    alert('Cannot cancel this battle now.');
-    return;
-  }
-
-  const battle = tx.snapshot.val();
-  const deductData = battle.creatorDeduct; // चेक करेगा पैसा कहाँ से कटा था
-
-  await runTransaction(ref(db, `users/${phone}`), (user) => {
-    if (!user) return user;
-    if (deductData) {
-      // जहाँ से पैसा लिया था, वहीँ वापस जाएगा
-      user.win_balance = Number(user.win_balance || 0) + Number(deductData.fromWin || 0);
-      user.balance = Number(user.balance || 0) + Number(deductData.fromCash || 0);
-    } else {
-      // Fallback: अगर पुराना डेटा न मिले तो सीधे Cash में
-      user.balance = Number(user.balance || 0) + Number(battle.amount || 0);
+    async function refundDeduction(userPhone, deductData) {
+      if (!userPhone || !deductData) return;
+      await runTransaction(ref(db, `users/${userPhone}`), (user) => {
+        if (!user) return user;
+        user.win_balance = Number(user.win_balance || 0) + Number(deductData.fromWin || 0);
+        user.balance = Number(user.balance || 0) + Number(deductData.fromCash || 0);
+        return user;
+      });
     }
-    return user;
-  });
-}
+
+    async function cancelOpenBattle(battleId) {
+      const battleRef = ref(db, `battles/${battleId}`);
+      const tx = await runTransaction(battleRef, (battle) => {
+        if (!battle || battle.status !== 'open' || battle.creatorPhone !== phone) return;
+        battle.status = 'cancelled';
+        battle.cancelledAt = Date.now();
+        battle.updatedAt = Date.now();
+        return battle;
+      });
+
+      if (!tx.committed) {
+        alert('Cannot cancel this battle now.');
+        return;
+      }
+
+      // Legacy tables may already have a creatorDeduct record. New tables do not reserve funds.
+      const battle = tx.snapshot.val();
+      if (battle?.creatorDeduct) await refundDeduction(phone, battle.creatorDeduct);
+    }
+
+    async function cancelOtherOpenBattles(playerPhones, exceptBattleId) {
+      const allSnap = await get(ref(db, 'battles'));
+      const allBattles = allSnap.val() || {};
+      const playerSet = new Set(playerPhones.filter(Boolean));
+
+      for (const [id, item] of Object.entries(allBattles)) {
+        if (id === exceptBattleId || !item || item.status !== 'open' || !playerSet.has(item.creatorPhone)) continue;
+        const otherRef = ref(db, `battles/${id}`);
+        const tx = await runTransaction(otherRef, (current) => {
+          if (!current || current.status !== 'open' || !playerSet.has(current.creatorPhone)) return;
+          current.status = 'cancelled';
+          current.cancelReason = 'player_matched_elsewhere';
+          current.cancelledAt = Date.now();
+          current.updatedAt = Date.now();
+          return current;
+        });
+        // Refund only older tables where money really was deducted at creation.
+        if (tx.committed) {
+          const cancelled = tx.snapshot.val();
+          if (cancelled?.creatorDeduct) await refundDeduction(cancelled.creatorPhone, cancelled.creatorDeduct);
+        }
+      }
+    }
 
     async function joinBattle(battleId) {
       const battleRef = ref(db, `battles/${battleId}`);
@@ -530,21 +551,47 @@ async function processReferralCommission(winnerPhone, winAmount) {
       }
 
       const battle = claimTx.snapshot.val();
+      let creatorNewDeduction = null;
+      let joinerDeduction = null;
       try {
-        const deduction = await deductSmartWallet(phone, Number(battle.amount));
-        await update(battleRef, {
-          status: 'playing',
-          timerStart: Date.now(), // Timer yahan se shuru hua
-          joinerDeduct: deduction,
-          startedAt: Date.now(),
-          updatedAt: Date.now()
+        // Older open battles may already have the creator's stake deducted.
+        if (!battle.creatorDeduct) {
+          creatorNewDeduction = await deductSmartWallet(battle.creatorPhone, Number(battle.amount));
+        }
+        joinerDeduction = await deductSmartWallet(phone, Number(battle.amount));
+
+        const startTime = Date.now();
+        const startTx = await runTransaction(battleRef, (current) => {
+          if (!current || current.status !== 'joining' || current.joinerPhone !== phone) return;
+          current.status = 'playing';
+          current.timerStart = startTime;
+          current.joinerDeduct = joinerDeduction;
+          if (creatorNewDeduction) current.creatorDeduct = creatorNewDeduction;
+          current.startedAt = startTime;
+          current.updatedAt = startTime;
+          return current;
         });
+        if (!startTx.committed) throw new Error('Match could not be confirmed. Please try again.');
+
+        // Once matched, cancel every other open table made by either participant.
+        // A cleanup error must not roll back a match that is already confirmed as playing.
+        try {
+          await cancelOtherOpenBattles([battle.creatorPhone, phone], battleId);
+        } catch (cleanupError) {
+          console.error('Match confirmed, but some other open tables could not be cancelled:', cleanupError);
+          alert('Match confirmed. Please refresh; one or more other open tables may need cancellation.');
+        }
       } catch (error) {
+        // Roll back only deductions made during this join attempt; do not refund legacy creator stakes.
+        if (joinerDeduction) await refundDeduction(phone, joinerDeduction).catch(console.error);
+        if (creatorNewDeduction) await refundDeduction(battle.creatorPhone, creatorNewDeduction).catch(console.error);
         await runTransaction(battleRef, (curr) => {
           if (!curr || curr.status !== 'joining' || curr.joinerPhone !== phone) return curr;
           curr.status = 'open';
           delete curr.joinerPhone;
           delete curr.joiningAt;
+          delete curr.joinerDeduct;
+          if (creatorNewDeduction) delete curr.creatorDeduct;
           curr.updatedAt = Date.now();
           return curr;
         });
