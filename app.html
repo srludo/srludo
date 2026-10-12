@@ -270,48 +270,17 @@
     const termsCheck = document.getElementById('termsCheck');
     let currentPhone = localStorage.getItem('sr_ludo_phone');
 
-    // --- REFERRAL LOGIC ---
-    const digitsOnly = (value) => String(value || '').replace(/\D/g, '');
-    const getReferralCode = (phone) => digitsOnly(phone).slice(-6);
-
-    // Six-digit referral code. Keep an existing code owner; never overwrite another user's code.
-    const registerReferralCodes = async (phone) => {
-      const code = getReferralCode(phone);
-      if (code.length !== 6) return;
-      const codeRef = ref(db, `referral_codes/${code}`);
-      await runTransaction(codeRef, (current) => current || { phone, createdAt: Date.now() });
-    };
-
+    // --- REFFERAL LOGIC ---
     const processReferral = async (newUserPhone, typedCode) => {
-      const code = digitsOnly(typedCode);
-      if (!code) return;
+      if (!typedCode || typedCode === newUserPhone) return;
       try {
-        const newUserRef = ref(db, `users/${newUserPhone}`);
-        const newUserSnap = await get(newUserRef);
-        const existingUser = newUserSnap.val() || {};
-        // A referral can only be attached once; don't overwrite an existing attribution.
-        if (existingUser.referredBy) return;
-
-        let codeSnap = await get(ref(db, `referral_codes/${code}`));
-        let referrerPhone = codeSnap.exists() ? codeSnap.val()?.phone : null;
-        if (!referrerPhone || digitsOnly(referrerPhone).slice(-10) === digitsOnly(newUserPhone).slice(-10)) return;
-        const referrerSnap = await get(ref(db, `users/${referrerPhone}`));
-        if (!referrerSnap.exists()) return;
-
-        const tx = await runTransaction(newUserRef, (user) => {
-          if (!user || user.referredBy) return;
-          user.referredBy = referrerPhone;
-          user.appliedCode = code;
-          user.referralLinkedAt = Date.now();
-          return user;
-        });
-        if (!tx.committed) return;
-        await set(ref(db, `referrals/${referrerPhone}/${newUserPhone}`), {
-          phone: newUserPhone,
-          joinedAt: Date.now(),
-          appliedCode: code
-        });
-      } catch (e) { console.error('Referral attribution error:', e); }
+        const codeSnap = await get(ref(db, `referral_codes/${typedCode}`));
+        if (codeSnap.exists()) {
+          const referrerPhone = codeSnap.val().phone;
+          await update(ref(db, `users/${newUserPhone}`), { referredBy: referrerPhone, appliedCode: typedCode });
+          await set(ref(db, `referrals/${referrerPhone}/${newUserPhone}`), { phone: newUserPhone, joinedAt: Date.now() });
+        }
+      } catch (e) { console.error(e); }
     };
 
     const createUserIfMissing = async (phone) => {
@@ -320,20 +289,18 @@
       const pendingRef = localStorage.getItem('sr_ludo_pending_referral');
 
       if (!userSnap.exists()) {
-        await set(userRef, { phone, balance: 0, win_balance: 0, referral_balance: 0, referral_earnings_total: 0, kyc_status: 'pending', time: Date.now() });
-      }
-      // Existing users also need their referral code registered after this update.
-      await registerReferralCodes(phone).catch((e) => console.error('Referral code registration error:', e));
-      if (pendingRef) {
-        await processReferral(phone, pendingRef);
-        localStorage.removeItem('sr_ludo_pending_referral');
+        await set(userRef, { phone, balance: 0, win_balance: 0, kyc_status: 'pending', time: Date.now() });
+        if (pendingRef) {
+          await processReferral(phone, pendingRef);
+          localStorage.removeItem('sr_ludo_pending_referral');
+        }
       }
 
       onValue(userRef, (s) => {
         const u = s.val() || {};
         cashAmount.textContent = `₹${u.balance || 0}`;
         winAmount.textContent = `₹${u.win_balance || 0}`;
-        const cleanCode = getReferralCode(phone);
+        const cleanCode = phone.replace(/\D/g, '').slice(-6);
         const myLink = `${window.location.origin}${window.location.pathname}?ref=${cleanCode}`;
         document.getElementById('myReferralLink').textContent = myLink;
       });
@@ -470,16 +437,10 @@ document.getElementById('highlightSignupBtn').onclick = () => {
       ).join('');
     };
 
-    // URL referral: persist the code and open Register mode so the field is visible.
+    // URL Referral Auto-fill
     const urlParams = new URLSearchParams(window.location.search);
-    const rURL = (urlParams.get('ref') || '').replace(/\D/g, '');
-    const referralInput = document.getElementById('referralCode');
-    const pendingReferral = rURL || localStorage.getItem('sr_ludo_pending_referral') || '';
-    if (pendingReferral) {
-      referralInput.value = pendingReferral;
-      localStorage.setItem('sr_ludo_pending_referral', pendingReferral);
-      switchMode(false);
-    }
+    const rURL = urlParams.get('ref');
+    if (rURL) { document.getElementById('referralCode').value = rURL; localStorage.setItem('sr_ludo_pending_referral', rURL); }
 
   </script>
 </body>
