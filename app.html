@@ -270,17 +270,52 @@
     const termsCheck = document.getElementById('termsCheck');
     let currentPhone = localStorage.getItem('sr_ludo_phone');
 
-    // --- REFFERAL LOGIC ---
+    // --- REFERRAL LOGIC ---
+    const digitsOnly = (value) => String(value || '').replace(/\D/g, '');
+    const getReferralCode = (phone) => digitsOnly(phone).slice(-10);
+
+    // Register a stable 10-digit code plus a legacy 6-digit alias for old links.
+    // Never overwrite an existing code owner (prevents a later user taking another user's code).
+    const registerReferralCodes = async (phone) => {
+      const digits = getReferralCode(phone);
+      if (digits.length !== 10) return;
+      const fullCodeRef = ref(db, `referral_codes/${digits}`);
+      await runTransaction(fullCodeRef, (current) => current || { phone, createdAt: Date.now() });
+      const legacyCode = digits.slice(-6);
+      const legacyRef = ref(db, `referral_codes/${legacyCode}`);
+      await runTransaction(legacyRef, (current) => current || { phone, legacy: true, createdAt: Date.now() });
+    };
+
     const processReferral = async (newUserPhone, typedCode) => {
-      if (!typedCode || typedCode === newUserPhone) return;
+      const code = digitsOnly(typedCode);
+      if (!code || code === getReferralCode(newUserPhone)) return;
       try {
-        const codeSnap = await get(ref(db, `referral_codes/${typedCode}`));
-        if (codeSnap.exists()) {
-          const referrerPhone = codeSnap.val().phone;
-          await update(ref(db, `users/${newUserPhone}`), { referredBy: referrerPhone, appliedCode: typedCode });
-          await set(ref(db, `referrals/${referrerPhone}/${newUserPhone}`), { phone: newUserPhone, joinedAt: Date.now() });
-        }
-      } catch (e) { console.error(e); }
+        const newUserRef = ref(db, `users/${newUserPhone}`);
+        const newUserSnap = await get(newUserRef);
+        const existingUser = newUserSnap.val() || {};
+        // A referral can only be attached once; don't overwrite an existing attribution.
+        if (existingUser.referredBy) return;
+
+        let codeSnap = await get(ref(db, `referral_codes/${code}`));
+        let referrerPhone = codeSnap.exists() ? codeSnap.val()?.phone : null;
+        if (!referrerPhone || digitsOnly(referrerPhone).slice(-10) === getReferralCode(newUserPhone)) return;
+        const referrerSnap = await get(ref(db, `users/${referrerPhone}`));
+        if (!referrerSnap.exists()) return;
+
+        const tx = await runTransaction(newUserRef, (user) => {
+          if (!user || user.referredBy) return;
+          user.referredBy = referrerPhone;
+          user.appliedCode = code;
+          user.referralLinkedAt = Date.now();
+          return user;
+        });
+        if (!tx.committed) return;
+        await set(ref(db, `referrals/${referrerPhone}/${newUserPhone}`), {
+          phone: newUserPhone,
+          joinedAt: Date.now(),
+          appliedCode: code
+        });
+      } catch (e) { console.error('Referral attribution error:', e); }
     };
 
     const createUserIfMissing = async (phone) => {
@@ -289,18 +324,20 @@
       const pendingRef = localStorage.getItem('sr_ludo_pending_referral');
 
       if (!userSnap.exists()) {
-        await set(userRef, { phone, balance: 0, win_balance: 0, kyc_status: 'pending', time: Date.now() });
-        if (pendingRef) {
-          await processReferral(phone, pendingRef);
-          localStorage.removeItem('sr_ludo_pending_referral');
-        }
+        await set(userRef, { phone, balance: 0, win_balance: 0, referral_balance: 0, referral_earnings_total: 0, kyc_status: 'pending', time: Date.now() });
+      }
+      // Existing users also need their referral code registered after this update.
+      await registerReferralCodes(phone).catch((e) => console.error('Referral code registration error:', e));
+      if (pendingRef) {
+        await processReferral(phone, pendingRef);
+        localStorage.removeItem('sr_ludo_pending_referral');
       }
 
       onValue(userRef, (s) => {
         const u = s.val() || {};
         cashAmount.textContent = `₹${u.balance || 0}`;
         winAmount.textContent = `₹${u.win_balance || 0}`;
-        const cleanCode = phone.replace(/\D/g, '').slice(-6);
+        const cleanCode = getReferralCode(phone);
         const myLink = `${window.location.origin}${window.location.pathname}?ref=${cleanCode}`;
         document.getElementById('myReferralLink').textContent = myLink;
       });
