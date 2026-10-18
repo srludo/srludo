@@ -1,0 +1,7 @@
+name = "rts-ludo-push"
+main = "worker.js"
+compatibility_date = "2026-10-18"
+
+[[kv_namespaces]]
+binding = "PUSH_SUBS"
+id = "f31284e767dd434f8b88a101d5a00ce2"
