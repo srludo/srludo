@@ -5,7 +5,7 @@
 */
 (() => {
   const PUSH_API_URL = "https://rts-ludo-push.expertdigitalmarketingsamarth.workers.dev";
-  const VAPID_PUBLIC_KEY = "REPLACE_WITH_MATCHING_VAPID_PUBLIC_KEY";
+  const VAPID_PUBLIC_KEY = "BFAXDaUivAsPjr0v1cbEjHj33OOaftYL5-n65xFhG2dQS0n7nCqoQfvXwZ5SB2LTdO16aOnA3Jxq8PEIH60MLnk";
 
   function urlBase64ToUint8Array(base64String) {
     const padding = "=".repeat((4 - base64String.length % 4) % 4);
