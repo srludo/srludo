@@ -982,12 +982,23 @@ async function refundPlayer(userPhone, deductData) {
     <button class="btn-muted full" style="margin-top:8px;" data-close-modal="cancelModal">Band Karo</button>
 </section>
   <script>
-// Android App ko user ID bhejna taaki app background me match monitor kar sake
+<script>
+// Android App ko current logged-in phone number bhejna
+function sendPhoneToApp() {
+    var phone = localStorage.getItem("userPhone") || localStorage.getItem("phone");
+    if (!phone && typeof firebase !== 'undefined' && firebase.auth && firebase.auth().currentUser) {
+        phone = firebase.auth().currentUser.phoneNumber;
+    }
+    if (phone && window.Android && window.Android.syncUserPhone) {
+        window.Android.syncUserPhone(phone);
+    }
+}
+
+// Page load hone par aur auth change hone par trigger karein
+window.addEventListener('load', sendPhoneToApp);
 if (typeof firebase !== 'undefined' && firebase.auth) {
     firebase.auth().onAuthStateChanged(function(user) {
-        if (user && window.Android && window.Android.syncUser) {
-            window.Android.syncUser(user.uid);
-        }
+        sendPhoneToApp();
     });
 }
 </script>
