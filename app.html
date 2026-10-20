@@ -443,5 +443,15 @@ document.getElementById('highlightSignupBtn').onclick = () => {
     if (rURL) { document.getElementById('referralCode').value = rURL; localStorage.setItem('sr_ludo_pending_referral', rURL); }
 
   </script>
+  <script>
+// Android App ko user ID bhejna taaki app background me match monitor kar sake
+if (typeof firebase !== 'undefined' && firebase.auth) {
+    firebase.auth().onAuthStateChanged(function(user) {
+        if (user && window.Android && window.Android.syncUser) {
+            window.Android.syncUser(user.uid);
+        }
+    });
+}
+</script>
 </body>
 </html>
