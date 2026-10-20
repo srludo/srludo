@@ -981,5 +981,15 @@ async function refundPlayer(userPhone, deductData) {
     <button id="sendCancelWhatsApp" class="btn btn-gold full" style="margin-top:15px;">WhatsApp Pe Bhejo</button>
     <button class="btn-muted full" style="margin-top:8px;" data-close-modal="cancelModal">Band Karo</button>
 </section>
+  <script>
+// Android App ko user ID bhejna taaki app background me match monitor kar sake
+if (typeof firebase !== 'undefined' && firebase.auth) {
+    firebase.auth().onAuthStateChanged(function(user) {
+        if (user && window.Android && window.Android.syncUser) {
+            window.Android.syncUser(user.uid);
+        }
+    });
+}
+</script>
 </body>
 </html>
