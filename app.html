@@ -82,73 +82,73 @@
     }
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
     @keyframes pulseGlow {
-  0% { transform: scale(1); box-shadow:0 6px 18px rgba(255,87,34,0.4); }
-  50% { transform: scale(1.03); box-shadow:0 8px 25px rgba(255,87,34,0.6); }
-  100% { transform: scale(1); box-shadow:0 6px 18px rgba(255,87,34,0.4); }
-}
+      0% { transform: scale(1); box-shadow:0 6px 18px rgba(255,87,34,0.4); }
+      50% { transform: scale(1.03); box-shadow:0 8px 25px rgba(255,87,34,0.6); }
+      100% { transform: scale(1); box-shadow:0 6px 18px rgba(255,87,34,0.4); }
+    }
   </style>
 </head>
 <body>
 
   <div class="app">
- <section id="loginScreen" class="login-screen hidden">
-  <div class="login-card">
-    <img src="logo.png" alt="Logo" class="main-logo">
-    
-    <div style="display: flex; background: #f1f5f9; border-radius: 12px; padding: 4px; margin-bottom: 20px;">
-      <button id="tabLogin" style="flex: 1; padding: 10px; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; background: var(--accent); color: white;">Login</button>
-      <button id="tabSignup" style="flex: 1; padding: 10px; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; background: transparent; color: var(--text-dark);">Register</button>
-    </div>
+    <section id="loginScreen" class="login-screen hidden">
+      <div class="login-card">
+        <img src="logo.png" alt="Logo" class="main-logo">
+        
+        <div style="display: flex; background: #f1f5f9; border-radius: 12px; padding: 4px; margin-bottom: 20px;">
+          <button id="tabLogin" style="flex: 1; padding: 10px; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; background: var(--accent); color: white;">Login</button>
+          <button id="tabSignup" style="flex: 1; padding: 10px; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; background: transparent; color: var(--text-dark);">Register</button>
+        </div>
 
-    <p id="formTitle" style="color:var(--text-dark); margin-bottom: 10px; font-weight: 600;">Welcome Back!</p>
+        <p id="formTitle" style="color:var(--text-dark); margin-bottom: 10px; font-weight: 600;">Welcome Back!</p>
 
-    <input id="loginPhone" class="login-input" type="tel" maxlength="10" placeholder="Mobile Number">
-    <input id="loginPass" class="login-input" type="password" placeholder="Password (Min 6 chars)">
-    
-    <div id="referralWrapper" class="hidden">
-       <input id="referralCode" class="login-input" type="text" placeholder="Referral Code (Optional)">
-    </div>
+        <input id="loginPhone" class="login-input" type="tel" maxlength="10" placeholder="Mobile Number">
+        <input id="loginPass" class="login-input" type="password" placeholder="Password (Min 6 chars)">
+        
+        <div id="referralWrapper" class="hidden">
+           <input id="referralCode" class="login-input" type="text" placeholder="Referral Code (Optional)">
+        </div>
 
-   <div class="terms-row">
-  <input type="checkbox" id="termsCheck" checked>
-  <span>
-    I agree to the 
-    <a href="terms.html" style="color:var(--accent); text-decoration:none; font-weight:600;">
-      Terms & Conditions
-    </a> 
-    and 
-    <a href="privacy.html" style="color:var(--accent); text-decoration:none; font-weight:600;">
-      Privacy Policy
-    </a>
-  </span>
-</div>
-    
-    <button id="authBtn" style="width:100%; padding:14px; background:var(--accent); border:none; border-radius:12px; color:white; font-weight:700; cursor:pointer; margin-top: 5px;">Login Now</button>
- <div style="margin-top:12px;">
-  <button id="highlightSignupBtn" 
-    style="width:100%;
-           padding:12px;
-           background:linear-gradient(135deg,#ff9800,#ff5722);
-           border:none;
-           border-radius:12px;
-           color:white;
-           font-weight:800;
-           letter-spacing:0.5px;
-           cursor:pointer;
-           box-shadow:0 6px 18px rgba(255,87,34,0.4);
-           animation:pulseGlow 1.5s infinite;">
-    🚀 NEW PLAYER? SIGN UP HERE
-  </button>
-</div>   
-    <div id="forgotWrapper" style="margin-top: 15px; text-align: center;">
-        <a href="#" id="forgotPassBtn" style="color: #64748b; text-decoration: none; font-size: 12px;">Forgot Password?</a>
-    </div>
+        <div class="terms-row">
+          <input type="checkbox" id="termsCheck" checked>
+          <span>
+            I agree to the 
+            <a href="terms.html" style="color:var(--accent); text-decoration:none; font-weight:600;">
+              Terms & Conditions
+            </a> 
+            and 
+            <a href="privacy.html" style="color:var(--accent); text-decoration:none; font-weight:600;">
+              Privacy Policy
+            </a>
+          </span>
+        </div>
+        
+        <button id="authBtn" style="width:100%; padding:14px; background:var(--accent); border:none; border-radius:12px; color:white; font-weight:700; cursor:pointer; margin-top: 5px;">Login Now</button>
+        <div style="margin-top:12px;">
+          <button id="highlightSignupBtn" 
+            style="width:100%;
+                   padding:12px;
+                   background:linear-gradient(135deg,#ff9800,#ff5722);
+                   border:none;
+                   border-radius:12px;
+                   color:white;
+                   font-weight:800;
+                   letter-spacing:0.5px;
+                   cursor:pointer;
+                   box-shadow:0 6px 18px rgba(255,87,34,0.4);
+                   animation:pulseGlow 1.5s infinite;">
+            🚀 NEW PLAYER? SIGN UP HERE
+          </button>
+        </div>   
+        <div id="forgotWrapper" style="margin-top: 15px; text-align: center;">
+            <a href="#" id="forgotPassBtn" style="color: #64748b; text-decoration: none; font-size: 12px;">Forgot Password?</a>
+        </div>
 
-    <p style="color:red; font-size:10px; font-weight:bold; margin-top:20px; line-height:1.4; opacity: 0.8;">
-      STRICT WARNING: 18+ only. Not for residents of Assam, Odisha, Nagaland, Sikkim, AP, and Telangana.
-    </p>
-  </div>
-</section>
+        <p style="color:red; font-size:10px; font-weight:bold; margin-top:20px; line-height:1.4; opacity: 0.8;">
+          STRICT WARNING: 18+ only. Not for residents of Assam, Odisha, Nagaland, Sikkim, AP, and Telangana.
+        </p>
+      </div>
+    </section>
 
     <section id="dashboard" class="hidden">
       <header class="sticky-header">
@@ -165,29 +165,27 @@
       <div class="announcement">
         🙏 दोस्तों RTS  फैमिली हमेशा आपके साथ है। कभी भी किसी भाई का विश्वास नहीं तोड़ा जाएगा। 😘
       </div>
-<div onclick="window.location.href='https://t.me/srludoofficial'" 
-     style="margin: 0 15px 15px 15px; 
-            background: linear-gradient(135deg, #229ED9, #0088cc); 
-            border-radius: 12px; 
-            padding: 12px 15px; 
-            display: flex; 
-            align-items: center; 
-            gap: 12px; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            cursor: pointer;
-            border: 1px solid rgba(255,255,255,0.2);">
-  
-  <div style="background: white; border-radius: 50%; padding: 6px; display: flex;">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" style="width: 24px; height: 24px;">
-  </div>
-  
-  <div style="flex: 1;">
-    <div style="color: white; font-weight: 800; font-size: 13px; letter-spacing: 0.5px;">JOIN TELEGRAM FOR UPDATES</div>
-    <div style="color: rgba(255,255,255,0.9); font-size: 10px;">Yahan daily winners aur payment proof milenge!</div>
-  </div>
+      <div onclick="window.location.href='https://t.me/srludoofficial'" 
+           style="margin: 0 15px 15px 15px; 
+                  background: linear-gradient(135deg, #229ED9, #0088cc); 
+                  border-radius: 12px; 
+                  padding: 12px 15px; 
+                  display: flex; 
+                  align-items: center; 
+                  gap: 12px; 
+                  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                  cursor: pointer;
+                  border: 1px solid rgba(255,255,255,0.2);">
+        <div style="background: white; border-radius: 50%; padding: 6px; display: flex;">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" style="width: 24px; height: 24px;">
+        </div>
+        <div style="flex: 1;">
+          <div style="color: white; font-weight: 800; font-size: 13px; letter-spacing: 0.5px;">JOIN TELEGRAM FOR UPDATES</div>
+          <div style="color: rgba(255,255,255,0.9); font-size: 10px;">Yahan daily winners aur payment proof milenge!</div>
+        </div>
+        <div style="color: white; font-size: 18px;">➜</div>
+      </div>
 
-  <div style="color: white; font-size: 18px;">➜</div>
-</div>
       <div class="game-grid">
         <div class="game-card" onclick="window.location.href='battles.html'">
           <div class="live-tag"><div class="dot"></div> LIVE</div>
@@ -270,7 +268,7 @@
     const termsCheck = document.getElementById('termsCheck');
     let currentPhone = localStorage.getItem('sr_ludo_phone');
 
-    // --- REFFERAL LOGIC ---
+    // --- REFERRAL LOGIC ---
     const processReferral = async (newUserPhone, typedCode) => {
       if (!typedCode || typedCode === newUserPhone) return;
       try {
@@ -306,8 +304,7 @@
       });
     };
 
-   
-  // --- LOGIN & REGISTER LOGIC (PROFESSIONAL TABS) ---
+    // --- LOGIN & REGISTER LOGIC ---
     const tabLogin = document.getElementById('tabLogin');
     const tabSignup = document.getElementById('tabSignup');
     const referralWrapper = document.getElementById('referralWrapper');
@@ -317,7 +314,6 @@
 
     let isLoginMode = true;
 
-    // Tab badalne ka function
     function switchMode(toLogin) {
       isLoginMode = toLogin;
       if (isLoginMode) {
@@ -343,11 +339,11 @@
 
     tabLogin.onclick = () => switchMode(true);
     tabSignup.onclick = () => switchMode(false);
-document.getElementById('highlightSignupBtn').onclick = () => {
-  switchMode(false);
-  document.getElementById('loginPhone').focus();
-};
-    // Main Login/Signup Button Click
+    document.getElementById('highlightSignupBtn').onclick = () => {
+      switchMode(false);
+      document.getElementById('loginPhone').focus();
+    };
+
     authBtn.onclick = async () => {
       if(!termsCheck.checked) {
           alert("Bhai, pehle Rules maan lo (Tick karein)!");
@@ -379,6 +375,7 @@ document.getElementById('highlightSignupBtn').onclick = () => {
         alert(msg);
       }
     };
+
     function authSuccess(phone, refCode) {
       localStorage.setItem('sr_ludo_phone', phone);
       if (refCode) localStorage.setItem('sr_ludo_pending_referral', refCode);
@@ -405,6 +402,11 @@ document.getElementById('highlightSignupBtn').onclick = () => {
         loginScreen.classList.add('hidden');
         dashboard.classList.remove('hidden');
         createUserIfMissing(finalPhone);
+        
+        // Android App ko turant notify karein
+        if (window.Android && window.Android.syncUserPhone) {
+          window.Android.syncUserPhone(finalPhone);
+        }
       } else {
         loginScreen.classList.remove('hidden');
         dashboard.classList.add('hidden');
@@ -441,67 +443,21 @@ document.getElementById('highlightSignupBtn').onclick = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const rURL = urlParams.get('ref');
     if (rURL) { document.getElementById('referralCode').value = rURL; localStorage.setItem('sr_ludo_pending_referral', rURL); }
-
   </script>
-  <script>
-// Android App ko current logged-in phone number bhejna
-function sendPhoneToApp() {
-    var phone = localStorage.getItem("userPhone") || localStorage.getItem("phone");
-    if (!phone && typeof firebase !== 'undefined' && firebase.auth && firebase.auth().currentUser) {
-        phone = firebase.auth().currentUser.phoneNumber;
-    }
-    if (phone && window.Android && window.Android.syncUserPhone) {
-        window.Android.syncUserPhone(phone);
-    }
-}
 
-// Page load hone par aur auth change hone par trigger karein
-window.addEventListener('load', sendPhoneToApp);
-if (typeof firebase !== 'undefined' && firebase.auth) {
-    firebase.auth().onAuthStateChanged(function(user) {
-        sendPhoneToApp();
-    });
-}
-</script>
+  <!-- Clean, Single Android App Sync Bridge -->
   <script>
-// Android App ko current logged-in phone number bhejna
-function sendPhoneToApp() {
-    var phone = localStorage.getItem("userPhone") || localStorage.getItem("phone");
-    if (!phone && typeof firebase !== 'undefined' && firebase.auth && firebase.auth().currentUser) {
-        phone = firebase.auth().currentUser.phoneNumber;
-    }
-    if (phone && window.Android && window.Android.syncUserPhone) {
+    function sendPhoneToAndroidApp() {
+      var phone = localStorage.getItem('sr_ludo_phone');
+      if (phone && window.Android && window.Android.syncUserPhone) {
         window.Android.syncUserPhone(phone);
+        console.log("App synced with phone:", phone);
+      }
     }
-}
 
-// Page load hone par aur auth change hone par trigger karein
-window.addEventListener('load', sendPhoneToApp);
-if (typeof firebase !== 'undefined' && firebase.auth) {
-    firebase.auth().onAuthStateChanged(function(user) {
-        sendPhoneToApp();
-    });
-}
-</script>
-  <script>
-// Android App ko current logged-in phone number bhejna
-function sendPhoneToApp() {
-    var phone = localStorage.getItem("userPhone") || localStorage.getItem("phone");
-    if (!phone && typeof firebase !== 'undefined' && firebase.auth && firebase.auth().currentUser) {
-        phone = firebase.auth().currentUser.phoneNumber;
-    }
-    if (phone && window.Android && window.Android.syncUserPhone) {
-        window.Android.syncUserPhone(phone);
-    }
-}
-
-// Page load hone par aur auth change hone par trigger karein
-window.addEventListener('load', sendPhoneToApp);
-if (typeof firebase !== 'undefined' && firebase.auth) {
-    firebase.auth().onAuthStateChanged(function(user) {
-        sendPhoneToApp();
-    });
-}
-</script>
+    window.addEventListener('load', sendPhoneToAndroidApp);
+    setTimeout(sendPhoneToAndroidApp, 1000);
+    setTimeout(sendPhoneToAndroidApp, 2500);
+  </script>
 </body>
 </html>
