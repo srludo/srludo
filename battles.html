@@ -608,7 +608,7 @@
 
     async function setRoomCode(battleId, code) {
       const roomCode = (code || '').trim();
-      if (!/^\\d{8}$/.test(roomCode)) {
+      if (!/^\d{8}$/.test(roomCode)) {
         return alert('Please enter the valid 8-digit Ludo King room code.');
       }
       const tx = await runTransaction(ref(db, `battles/${battleId}`), (battle) => {
