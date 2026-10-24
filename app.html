@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <link rel="icon" type="image/png" href="classic2.png">
-  <title>RTS Ludo | Home</title>
+  <title>Online Strategy Board Game</title>
   <meta name="title" content="RTS LUDO - Best Online Ludo Battle Arena">
   <meta name="description" content="Play Ludo with friends and family in the premium battle arena.">
   <meta name="keywords" content="RTS , Online Ludo, apni ludo ki skills dikhao">
@@ -15,7 +15,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   
   <style>
     :root {
@@ -25,7 +25,7 @@
       --shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
     }
     body {
-      margin: 0; font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      margin: 0; font-family: 'Inter', sans-serif;
       background: radial-gradient(1200px 500px at 50% -200px, #154b99 0%, var(--bg) 65%);
       color: var(--text); min-height: 100vh; visibility: hidden; opacity: 0;
     }
@@ -86,233 +86,6 @@
       50% { transform: scale(1.03); box-shadow:0 8px 25px rgba(255,87,34,0.6); }
       100% { transform: scale(1); box-shadow:0 6px 18px rgba(255,87,34,0.4); }
     }
-
-    /* --- RTS LUDO shared Battles theme --- */
-    :root {
-      --bg: #040913;
-      --card: #0d1b33;
-      --card-dark: #0d1b33;
-      --text: #e8efff;
-      --text-dark: #e8efff;
-      --muted: #9fb0d1;
-      --line: rgba(255,255,255,.08);
-      --accent: #2f7bff;
-      --accent-glow: rgba(47,123,255,.28);
-      --gold-1: #a86b00;
-      --gold-2: #ffd05a;
-      --danger: #ff3d4d;
-      --shadow: 0 14px 32px rgba(0,0,0,.24);
-    }
-    html { min-height: 100%; background: var(--bg); }
-    body {
-      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: radial-gradient(1200px 500px at 50% -200px, #154b99 0%, var(--bg) 65%);
-      color: var(--text);
-      overflow-x: hidden;
-    }
-    .app {
-      max-width: 540px;
-      background: linear-gradient(180deg, rgba(255,255,255,.025), rgba(255,255,255,0));
-      border-left: 1px solid rgba(255,255,255,.045);
-      border-right: 1px solid rgba(255,255,255,.045);
-      padding-bottom: max(90px, env(safe-area-inset-bottom));
-    }
-    .login-screen { background: transparent; padding: 22px 16px; }
-    .login-card {
-      max-width: 420px;
-      background: linear-gradient(160deg, #102340 0%, #0a172b 100%);
-      color: var(--text);
-      border: 1px solid rgba(255,255,255,.09);
-      border-radius: 24px;
-      padding: 28px 22px;
-      box-shadow: 0 22px 60px rgba(0,0,0,.34);
-    }
-    .main-logo { max-width: 100%; object-fit: contain; filter: drop-shadow(0 0 12px rgba(47,123,255,.35)); }
-    .login-input {
-      box-sizing: border-box;
-      background: #08152a;
-      border: 1px solid rgba(255,255,255,.13);
-      border-radius: 12px;
-      color: #e8efff;
-      min-height: 46px;
-      font-size: 14px;
-      padding: 13px 14px;
-      margin-bottom: 12px;
-    }
-    .login-input::placeholder { color: #8497b8; opacity: 1; }
-    .login-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(47,123,255,.13); }
-    #tabLogin, #tabSignup { transition: background .2s ease, color .2s ease; }
-    #authBtn {
-      background: linear-gradient(135deg, #2f7bff, #154b99) !important;
-      box-shadow: 0 8px 22px rgba(47,123,255,.24);
-      min-height: 46px;
-      font-family: inherit;
-    }
-    #highlightSignupBtn {
-      background: linear-gradient(135deg, #2f7bff, #154b99) !important;
-      box-shadow: 0 8px 22px rgba(47,123,255,.24) !important;
-      animation: none !important;
-      font-family: inherit;
-    }
-    .terms-row { color: var(--muted); align-items: flex-start; text-align: left; line-height: 1.6; }
-    .terms-row input { flex: 0 0 16px; margin-top: 2px; accent-color: var(--accent); }
-    .sticky-header {
-      background: rgba(4,9,19,.9);
-      border-bottom: 1px solid var(--line);
-      backdrop-filter: blur(12px);
-      padding: 12px;
-      gap: 8px;
-    }
-    .hamburger {
-      width: 38px; height: 38px;
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      background: rgba(255,255,255,.04);
-      font-size: 21px;
-    }
-    .nav-logo { width: auto; max-width: 92px; object-fit: contain; }
-    .wallets { gap: 6px; }
-    .pill {
-      min-width: 0;
-      width: clamp(83px, 23vw, 108px);
-      padding: 7px 8px;
-      border: 1px solid rgba(255,255,255,.17);
-      box-shadow: none;
-      font-size: 10px;
-      line-height: 1.2;
-    }
-    .pill strong { font-size: 13px; overflow-wrap: anywhere; }
-    .cash-pill { background: linear-gradient(130deg, #0f49b3, #2a89ff); }
-    .win-pill { background: linear-gradient(130deg, var(--gold-1), var(--gold-2)); }
-    .announcement {
-      background: linear-gradient(135deg, #102340, #0b172a);
-      border: 1px solid rgba(255,208,90,.45);
-      box-shadow: 0 8px 24px rgba(0,0,0,.14);
-      color: var(--text);
-      line-height: 1.65;
-    }
-    .game-grid { gap: 12px; }
-    .game-card {
-      background: linear-gradient(160deg, #102340, #0a172b);
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      box-shadow: 0 12px 28px rgba(0,0,0,.2);
-      transition: transform .2s ease, border-color .2s ease;
-    }
-    .game-card:active { transform: scale(.985); }
-    .game-card:hover { border-color: rgba(47,123,255,.55); }
-    .game-label {
-      color: var(--text);
-      background: #0d1b33;
-      font-size: 13px;
-      padding: 7px;
-      text-align: center;
-    }
-    .live-tag { box-shadow: 0 4px 12px rgba(0,0,0,.15); }
-    .modal {
-      width: calc(100% - 28px);
-      max-width: 460px;
-      max-height: min(76dvh, 640px);
-      padding: 18px;
-      padding-bottom: max(18px, env(safe-area-inset-bottom));
-      background: #0a1a32;
-      border: 1px solid var(--line);
-      box-shadow: 0 24px 70px rgba(0,0,0,.45);
-      overflow-wrap: anywhere;
-    }
-    .record { overflow-wrap: anywhere; }
-    .bottom-nav {
-      width: min(540px, 100%);
-      padding: 9px 0 calc(9px + env(safe-area-inset-bottom));
-      background: rgba(4,9,19,.96);
-      border-top: 1px solid var(--line);
-      backdrop-filter: blur(12px);
-    }
-    .nav-item { color: #8ea1c3; font-weight: 600; line-height: 1.7; }
-    .nav-item.active { color: #69a1ff; }
-    .sidebar {
-      background: #09172d;
-      border-right: 1px solid var(--line);
-      padding: 18px;
-      padding-top: max(18px, env(safe-area-inset-top));
-    }
-    .menu-link { border-radius: 12px; }
-    .overlay { backdrop-filter: blur(3px); }
-    #myReferralLink {
-      color: #dce8ff !important;
-      background: #08152a !important;
-      border-color: rgba(47,123,255,.5) !important;
-      overflow-wrap: anywhere;
-      word-break: break-word;
-    }
-    /* Inline light panels are restyled to match the Battles screen. */
-    #dashboard > div[style*="background:white"],
-    #dashboard > div[style*="background: white"] {
-      background: #0d1b33 !important;
-      color: var(--text) !important;
-      border-color: var(--line) !important;
-    }
-    #dashboard > div[style*="background:white"] p,
-    #dashboard > div[style*="background: white"] p { color: var(--muted); }
-    @media (max-width: 380px) {
-      .sticky-header { padding: 10px 8px; }
-      .header-left { gap: 7px; }
-      .nav-logo { max-width: 72px; }
-      .pill { width: 80px; padding: 6px 5px; font-size: 9px; }
-      .pill strong { font-size: 12px; }
-      .game-grid { gap: 9px; padding: 0 12px; }
-      .announcement { margin: 12px; padding: 12px; font-size: 12px; }
-      .login-card { padding: 24px 16px; }
-      .footer-links a { margin: 0 6px; }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
-    }
-
-  
-    /* FINAL shared RTS LUDO Battles theme overrides */
-    /* Exact light-blue theme aligned with battles.html */
-    :root {
-      color-scheme: light;
-      --bg:#f4f7fc; --card:#ffffff; --card-dark:#ffffff; --text:#17243b;
-      --text-dark:#17243b; --muted:#64748b; --line:#dce5f1;
-      --accent:#2563eb; --gold-1:#dbeafe; --gold-2:#bfdbfe; --danger:#dc3545;
-      --shadow:0 5px 18px rgba(27,50,83,.06);
-    }
-    html, body { background:var(--bg) !important; color:var(--text) !important; }
-    body { background:linear-gradient(180deg,#edf4ff 0,#f7f9fd 280px,var(--bg) 100%) !important; font-family:'Plus Jakarta Sans',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif !important; }
-    .app { background:transparent !important; }
-    .sticky-header { background:rgba(255,255,255,.94) !important; border-bottom:1px solid var(--line); box-shadow:0 4px 18px rgba(28,55,96,.05); backdrop-filter:blur(14px); }
-    .hamburger { color:#243650 !important; }
-    .nav-logo { object-fit:contain; }
-    .pill { color:#203451 !important; border-color:#d8e4f5 !important; box-shadow:0 2px 8px rgba(26,57,100,.04) !important; }
-    .cash-pill { background:linear-gradient(135deg,#eaf2ff,#dbeafe) !important; color:#1d4ed8 !important; }
-    .win-pill { background:linear-gradient(135deg,#ecfdf3,#d1fae5) !important; color:#166534 !important; border-color:#bbf7d0 !important; }
-    .announcement { background:linear-gradient(135deg,#eff6ff,#fff) !important; color:#203451 !important; border:1px solid #d7e5fb !important; box-shadow:0 5px 18px rgba(27,50,83,.045); }
-    .game-card { background:#fff !important; border-color:#e0e8f3 !important; box-shadow:0 5px 18px rgba(27,50,83,.045) !important; }
-    .game-card:hover { border-color:#c8d8ef !important; box-shadow:0 8px 24px rgba(27,50,83,.075) !important; }
-    .game-label { color:#203451 !important; }
-    .live-tag { background:#fff !important; border:1px solid #dce5f1; }
-    .login-screen { background:linear-gradient(180deg,#edf4ff 0,#f7f9fd 280px,#f4f7fc 100%) !important; }
-    .login-card { background:#fff !important; color:#17243b !important; border:1px solid #e0e8f3; box-shadow:0 12px 36px rgba(27,50,83,.08); }
-    .login-input { background:#fff !important; color:#17243b !important; border:1px solid #d5e0ee !important; border-radius:12px !important; }
-    .login-input::placeholder { color:#91a0b5; }
-    .terms-row { color:#64748b !important; }
-    .bottom-nav { background:rgba(255,255,255,.96) !important; border-top:1px solid #dce5f1 !important; box-shadow:0 -4px 18px rgba(28,55,96,.045); backdrop-filter:blur(14px); }
-    .nav-item { color:#64748b !important; }
-    .nav-item.active { color:#2563eb !important; font-weight:800; }
-    .sidebar { background:#fff !important; border-right:1px solid #dce5f1 !important; box-shadow:8px 0 28px rgba(27,50,83,.08); }
-    .sidebar h4 { color:#17243b !important; }
-    .menu-link { color:#334761 !important; border-color:#dce5f1 !important; background:#f8faff !important; }
-    .menu-link:hover { background:#eff6ff !important; border-color:#bfdbfe !important; }
-    .overlay { background:rgba(15,23,42,.42) !important; backdrop-filter:blur(3px); }
-    .modal { background:#fff !important; color:#17243b !important; border:1px solid #dce5f1 !important; box-shadow:0 18px 50px rgba(27,50,83,.18); }
-    .record { background:#f8faff !important; border-color:#dce5f1 !important; color:#334761 !important; }
-    #myReferralLink { color:#1d4ed8; overflow-wrap:anywhere; }
-    #dashboard > div[style*="background:white"] { box-shadow:0 5px 18px rgba(27,50,83,.045); }
-    #highlightSignupBtn { background:linear-gradient(135deg,#2563eb,#3b82f6) !important; box-shadow:0 6px 16px rgba(37,99,235,.2) !important; animation:none !important; }
-    @media(max-width:380px) { .wallets { gap:5px !important; } .pill { min-width:0 !important; padding:6px 8px !important; font-size:10px !important; } .pill strong { font-size:12px !important; } .nav-logo { max-width:75px; object-fit:contain; } .login-card { padding:24px 16px !important; } }
-
   </style>
 </head>
 <body>
