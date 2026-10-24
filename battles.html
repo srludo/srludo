@@ -161,6 +161,21 @@
       display: block;
       margin-top: 5px;
     }
+    .room-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .room-actions > button {
+      flex: 1;
+      min-width: 0;
+    }
+    .room-help {
+      margin-top: 6px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 11px;
+    }
     .room-code {
       margin-top: 8px;
       font-size: 30px;
@@ -593,7 +608,9 @@
 
     async function setRoomCode(battleId, code) {
       const roomCode = (code || '').trim();
-      if (!roomCode) return alert('Enter room code first.');
+      if (!/^\\d{8}$/.test(roomCode)) {
+        return alert('Please enter the valid 8-digit Ludo King room code.');
+      }
       const tx = await runTransaction(ref(db, `battles/${battleId}`), (battle) => {
         if (!battle || battle.status !== 'playing' || battle.creatorPhone !== phone) return battle;
         if ((battle.room_code || battle.roomCode || '').toString().trim()) return battle;
@@ -710,13 +727,67 @@
       }).join('');
     }
 
+    function escapeHtml(value = '') {
+      return String(value).replace(/[&<>"']/g, (char) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      }[char]));
+    }
+
+    // Uses the room-link format supplied for this project.
+    // Confirm the destination domain is trusted before deploying to production.
+    function buildLudoKingUrl(roomCode) {
+      const code = String(roomCode || '').trim();
+      if (!/^\d{8}$/.test(code)) throw new Error('Invalid 8-digit room code.');
+      const url = new URL('https://lk.gggred.com/');
+      url.searchParams.set('rmc', code);
+      url.searchParams.set('gt', '0');
+      url.searchParams.set('po', '0');
+      return url.toString();
+    }
+
+    async function copyRoomCode(roomCode) {
+      const code = String(roomCode || '').trim();
+      if (!/^\d{8}$/.test(code)) return alert('Room code is not valid yet.');
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(code);
+        } else {
+          const temp = document.createElement('textarea');
+          temp.value = code;
+          temp.style.position = 'fixed';
+          temp.style.opacity = '0';
+          document.body.appendChild(temp);
+          temp.select();
+          const copied = document.execCommand('copy');
+          temp.remove();
+          if (!copied) throw new Error('Copy not supported');
+        }
+        alert('Room code copied: ' + code);
+      } catch (error) {
+        window.prompt('Copy this room code:', code);
+      }
+    }
+
+    function openLudoKingRoom(roomCode) {
+      try {
+        const url = buildLudoKingUrl(roomCode);
+        window.open(url, '_blank', 'noopener,noreferrer');
+      } catch (error) {
+        alert(error.message || 'Unable to open room link.');
+      }
+    }
+
     function battleControls(b) {
       const meCreator = b.creatorPhone === phone;
       const meJoiner = b.joinerPhone === phone;
       const meParticipant = meCreator || meJoiner;
       if (!meParticipant) return '';
 
-      const roomCode = b.room_code || b.roomCode || '';
+      const roomCode = String(b.room_code || b.roomCode || '').trim();
       const roomLocked = Boolean(roomCode);
       let timerHtml = '';
       if (meJoiner && !roomCode) {
@@ -725,21 +796,33 @@
           <span style="font-size:10px;">(Auto-cancel in 3:30 mins)</span>
         </div>`;
       }
+
       const roomInput = meCreator
         ? `<div class="row" style="margin-top:8px;">
-            <input class="input" id="room-${b.id}" placeholder="Enter Room Code" value="${roomCode}" ${roomLocked ? 'disabled' : ''} />
-            <button class="btn btn-gold" data-action="set-room" data-id="${b.id}" type="button" ${roomLocked ? 'disabled' : ''}>${roomLocked ? 'LOCKED' : 'SET'}</button>
+            <input class="input" id="room-${escapeHtml(b.id)}" placeholder="Enter 8-digit Room Code" inputmode="numeric" maxlength="8" value="${escapeHtml(roomCode)}" ${roomLocked ? 'disabled' : ''} />
+            <button class="btn btn-gold" data-action="set-room" data-id="${escapeHtml(b.id)}" type="button" ${roomLocked ? 'disabled' : ''}>${roomLocked ? 'LOCKED' : 'SET'}</button>
           </div>
           ${roomLocked ? '<div class="small muted" style="margin-top:6px;">Room code locked. It can only be set once.</div>' : ''}`
-        : (roomCode ? `<div class="room-code">${roomCode}</div>` : '<div class="small muted" style="margin-top:8px;">Waiting for creator to set room code...</div>');
+        : (!roomCode ? '<div class="small muted" style="margin-top:8px;">Waiting for creator to set room code...</div>' : '');
+
+      const roomDisplay = roomLocked
+        ? `<div class="room-code">${escapeHtml(roomCode)}</div>
+           <div class="room-actions">
+             <button class="btn-muted" data-action="copy-room" data-id="${escapeHtml(b.id)}" data-room-code="${escapeHtml(roomCode)}" type="button">COPY CODE</button>
+             <button class="btn btn-win" data-action="join-ludo" data-id="${escapeHtml(b.id)}" data-room-code="${escapeHtml(roomCode)}" type="button">JOIN NOW</button>
+           </div>
+           <div class="room-help">Join Now opens the supplied Ludo King room link.</div>`
+        : '';
 
       const actionDisplay = roomCode ? 'flex' : 'none';
       return `
+        ${timerHtml}
         ${roomInput}
-        <div class="row" style="margin-top:10px;display:${actionDisplay};">
-          <button class="btn btn-win full" data-action="i-win" data-id="${b.id}" type="button">I WIN</button>
-          <button class="btn btn-danger full" data-action="i-lost" data-id="${b.id}" type="button">I LOST</button>
-          <button class="btn-muted full" style="border-color: #ffb34a; color: #ffb34a; margin-top: 5px;" data-action="i-cancel" data-id="${b.id}" type="button">I CANCEL / REPORT ADMIN</button>
+        ${roomDisplay}
+        <div class="row" style="margin-top:10px;display:${actionDisplay};flex-wrap:wrap;">
+          <button class="btn btn-win full" data-action="i-win" data-id="${escapeHtml(b.id)}" type="button">I WIN</button>
+          <button class="btn btn-danger full" data-action="i-lost" data-id="${escapeHtml(b.id)}" type="button">I LOST</button>
+          <button class="btn-muted full" style="border-color: #ffb34a; color: #ffb34a; margin-top: 5px;" data-action="i-cancel" data-id="${escapeHtml(b.id)}" type="button">I CANCEL / REPORT ADMIN</button>
         </div>
       `;
     }
@@ -825,6 +908,12 @@
         if (action === 'set-room') {
           const roomInput = document.getElementById(`room-${id}`);
           await setRoomCode(id, roomInput?.value || '');
+        }
+        if (action === 'copy-room') {
+          await copyRoomCode(btn.dataset.roomCode || '');
+        }
+        if (action === 'join-ludo') {
+          openLudoKingRoom(btn.dataset.roomCode || '');
         }
       } catch (error) {
         alert(error.message || 'Action failed.');
