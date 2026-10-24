@@ -611,9 +611,119 @@
       }
     }
 
+  
+    /* Final mobile layout + real action loading indicators */
+    .row { min-width: 0; flex-wrap: wrap; }
+    .row > * { min-width: 0; }
+    .row.space-between {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: nowrap;
+      gap: 10px;
+    }
+    .row.space-between > strong { flex: 0 1 auto; min-width: 0; }
+    .status {
+      display: inline-flex !important;
+      flex: 0 0 auto;
+      align-items: center;
+      justify-content: center;
+      align-self: center;
+      width: max-content;
+      max-width: 100%;
+      min-height: 26px;
+      line-height: 1.2;
+      white-space: nowrap;
+      word-break: keep-all;
+      overflow-wrap: normal;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 800;
+    }
+    .status::before {
+      content: "";
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      flex: 0 0 6px;
+      border-radius: 50%;
+      margin-right: 6px;
+      background: currentColor;
+    }
+    .st-open { color: #a16207 !important; background: #fffbeb !important; border-color: #fde68a !important; }
+    .st-playing { color: #1d4ed8 !important; background: #eff6ff !important; border-color: #bfdbfe !important; }
+    .st-dispute { color: #b45309 !important; background: #fff7ed !important; border-color: #fed7aa !important; }
+    .st-completed { color: #15803d !important; background: #f0fdf4 !important; border-color: #bbf7d0 !important; }
+    .status[class*="cancel"] { color: #b91c1c !important; background: #fef2f2 !important; border-color: #fecaca !important; }
+    .btn.is-loading { opacity: .82; cursor: wait; pointer-events: none; }
+    .btn-spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      flex: 0 0 14px;
+      border: 2px solid currentColor;
+      border-right-color: transparent;
+      border-radius: 50%;
+      animation: rtsSpin .7s linear infinite;
+      vertical-align: -2px;
+    }
+    .btn-loading-content {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-width: 0;
+      white-space: nowrap;
+    }
+    .rts-page-loader {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 12px;
+      background: rgba(247, 250, 255, .97);
+      color: #1d4ed8;
+      transition: opacity .2s ease, visibility .2s ease;
+    }
+    .rts-page-loader.is-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+    .rts-loader-mark {
+      width: 42px; height: 42px;
+      border: 4px solid #dbeafe;
+      border-top-color: #2563eb;
+      border-radius: 50%;
+      animation: rtsSpin .75s linear infinite;
+    }
+    .rts-loader-label { font-size: 12px; font-weight: 800; letter-spacing: .08em; }
+    @keyframes rtsSpin { to { transform: rotate(360deg); } }
+    @media (max-width: 600px) {
+      .row.space-between { gap: 8px; }
+      .row.space-between > strong { font-size: 15px; }
+      .status { font-size: 9px; padding: 5px 8px; min-height: 25px; }
+      .row:has(> .input) { align-items: stretch; }
+      .row:has(> .input) .input { flex: 1 1 100%; width: 100%; }
+      .row:has(> .input) button { flex: 1 1 100%; width: 100%; }
+    }
+    @media (max-width: 340px) {
+      .row.space-between { align-items: flex-start; flex-wrap: wrap; }
+      .row.space-between > strong { flex-basis: 100%; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .btn-spinner, .rts-loader-mark { animation-duration: 1.5s; }
+    }
+
   </style>
 </head>
 <body>
+
+  <div id="rtsPageLoader" class="rts-page-loader" role="status" aria-live="polite">
+    <div class="rts-loader-mark" aria-hidden="true"></div>
+    <div class="rts-loader-label">LOADING RTS LUDO</div>
+  </div>
+
   <div class="app">
     <header class="sticky-header">
       <a class="back-btn" href="index.html">← Home</a>
@@ -872,7 +982,7 @@
         return;
       }
 
-      createBattleBtn.disabled = true;
+      const restoreCreateButton = setButtonLoading(createBattleBtn, 'Creating battle');
       try {
         const available = Number(myUser.win_balance || 0) + Number(myUser.balance || 0);
         if (available < amount) throw new Error('Insufficient wallet balance for this battle amount.');
@@ -890,7 +1000,7 @@
       } catch (error) {
         alert(error.message || 'Unable to create battle.');
       } finally {
-        createBattleBtn.disabled = false;
+        if (restoreCreateButton) restoreCreateButton();
       }
     }
 
@@ -1280,6 +1390,20 @@
       `).join('');
     }
 
+
+    const rtsPageLoader = document.getElementById('rtsPageLoader');
+    const hideRtsPageLoader = () => {
+      if (rtsPageLoader) {
+        rtsPageLoader.classList.add('is-hidden');
+        window.setTimeout(() => rtsPageLoader.remove(), 250);
+      }
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', hideRtsPageLoader, { once: true });
+    } else {
+      hideRtsPageLoader();
+    }
+
     createBattleBtn.addEventListener('click', createBattle);
 
     rulesBtn.addEventListener('click', () => showModal(rulesModal));
@@ -1293,11 +1417,39 @@
 
     submitWinBtn.addEventListener('click', declareWinWithScreenshot);
 
+
+    function setButtonLoading(button, label = 'Please wait') {
+      if (!button || button.dataset.loading === 'true') return null;
+      const originalHtml = button.innerHTML;
+      button.dataset.loading = 'true';
+      button.disabled = true;
+      button.classList.add('is-loading');
+      button.innerHTML = `<span class="btn-loading-content"><span class="btn-spinner" aria-hidden="true"></span><span>${label}</span></span>`;
+      return () => {
+        if (!button.isConnected) return;
+        button.innerHTML = originalHtml;
+        button.disabled = false;
+        button.classList.remove('is-loading');
+        delete button.dataset.loading;
+      };
+    }
+
     document.body.addEventListener('click', async (event) => {
       const btn = event.target.closest('button[data-action]');
       if (!btn) return;
       const action = btn.dataset.action;
       const id = btn.dataset.id;
+      const labels = {
+        cancel: 'Cancelling',
+        join: 'Joining',
+        'i-lost': 'Submitting',
+        'i-win': 'Opening',
+        'set-room': 'Saving',
+        'copy-room': 'Copying',
+        'join-ludo': 'Opening'
+      };
+      const restoreButton = setButtonLoading(btn, labels[action] || 'Please wait');
+      if (!restoreButton) return;
       try {
         if (action === 'cancel') await cancelOpenBattle(id);
         if (action === 'join') await joinBattle(id);
@@ -1318,6 +1470,8 @@
         }
       } catch (error) {
         alert(error.message || 'Action failed.');
+      } finally {
+        restoreButton();
       }
     });
 
