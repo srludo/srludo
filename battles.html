@@ -24,7 +24,21 @@
       --warn: #ffb34a;
     }
     * { box-sizing: border-box; }
+
+    /* Lightweight interactions: keep the page responsive without heavy effects. */
+    @keyframes pageFadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes roomCodeReveal {
+      from { opacity: 0; transform: translateY(7px) scale(.985); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    @keyframes buttonSpinner {
+      to { transform: rotate(360deg); }
+    }
     body {
+      animation: pageFadeIn .24s ease-out both;
       margin: 0;
       font-family: 'Inter', system-ui, sans-serif;
       background: radial-gradient(1200px 500px at 50% -200px, #154b99 0%, var(--bg) 65%);
@@ -101,6 +115,33 @@
       0%,100% { opacity: 1; transform: scale(1); }
       50% { opacity: .35; transform: scale(.8); }
     }
+    .btn, .btn-muted, .back-btn {
+      transition: transform .16s ease, filter .16s ease, box-shadow .16s ease, background-color .16s ease;
+    }
+    .btn:hover, .btn-muted:hover, .back-btn:hover {
+      filter: brightness(1.08);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, .16);
+    }
+    .btn:active, .btn-muted:active, .back-btn:active {
+      transform: scale(.975);
+    }
+    button:disabled {
+      cursor: not-allowed;
+      opacity: .68;
+      filter: saturate(.75);
+      box-shadow: none;
+    }
+    .btn-spinner {
+      display: inline-block;
+      width: 13px;
+      height: 13px;
+      margin-right: 7px;
+      vertical-align: -2px;
+      border: 2px solid currentColor;
+      border-right-color: transparent;
+      border-radius: 50%;
+      animation: buttonSpinner .65s linear infinite;
+    }
     .btn {
       border: 0;
       border-radius: 12px;
@@ -125,6 +166,7 @@
 
     .card {
       margin-top: 10px;
+      transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease;
       background: linear-gradient(160deg, var(--card), var(--card-2));
       border: 1px solid var(--line);
       border-radius: 16px;
@@ -177,6 +219,7 @@
       font-size: 11px;
     }
     .room-code {
+      animation: roomCodeReveal .22s ease-out both;
       margin-top: 8px;
       font-size: 30px;
       letter-spacing: 1px;
@@ -209,7 +252,16 @@
       padding: 14px;
       display: none;
     }
-    .modal.show { display: block; }
+    .modal.show { display: block; animation: pageFadeIn .18s ease-out both; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+      }
+    }
   </style>
 </head>
 <body>
