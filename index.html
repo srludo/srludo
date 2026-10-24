@@ -1,246 +1,191 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RTS LUDO - Premium Online Battle Arena</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Montserrat:wght@800&display=swap" rel="stylesheet">
-    
-    <style>
-        :root {
-            --bg-dark: #040913;
-            --bg-card: #0d1b33;
-            --accent: #2f7bff;
-            --accent-glow: rgba(47, 123, 255, 0.5);
-            --gold: #ffd05a;
-            --gold-glow: rgba(255, 208, 90, 0.4);
-            --text-main: #e8efff;
-            --text-muted: #9fb0d1;
-        }
-
-        body {
-            margin: 0; padding: 0;
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            overflow-x: hidden;
-            text-align: center;
-        }
-
-        /* Gradient Background with Radial Effect */
-        .main-container {
-            background: radial-gradient(circle at 50% -20%, #1a3c75 0%, var(--bg-dark) 60%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        /* --- Hero Section --- */
-        .hero { padding: 60px 20px 40px; }
-
-        .logo-container {
-            display: inline-block;
-            position: relative;
-            margin-bottom: 25px;
-        }
-        
-        .main-logo {
-            height: 120px;
-            filter: drop-shadow(0 0 15px var(--accent-glow));
-            animation: logoFloat 4s ease-in-out infinite;
-        }
-
-        .premium-tag {
-            position: absolute; top: -10px; right: -30px;
-            background: linear-gradient(135deg, var(--gold), #a86b00);
-            color: #1f1711; font-size: 10px; font-weight: 800;
-            padding: 3px 8px; border-radius: 50px;
-            text-transform: uppercase; letter-spacing: 1px;
-        }
-
-        h1 {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 36px; font-weight: 800;
-            background: linear-gradient(180deg, #fff 0%, #a8cfff 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin: 0 0 15px;
-            letter-spacing: -1px;
-        }
-
-        .hero-p {
-            font-size: 15px; color: var(--text-muted);
-            max-width: 400px; margin: 0 auto 35px;
-            line-height: 1.6; font-weight: 400;
-        }
-
-        /* --- Premium CTA Button --- */
-        .btn-premium {
-            display: inline-block;
-            padding: 18px 50px;
-            background: linear-gradient(135deg, #2f7bff, #154b99);
-            color: white; font-weight: 700; font-size: 18px;
-            text-decoration: none; border-radius: 50px;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4), 
-                        0 0 30px var(--accent-glow);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            letter-spacing: 1px;
-        }
-
-        .btn-premium:hover {
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5), 
-                        0 0 40px var(--accent-glow);
-        }
-
-        /* Shine Effect on Button */
-        .btn-premium::after {
-            content: '';
-            position: absolute; top: -50%; left: -100%;
-            width: 100%; height: 200%;
-            background: rgba(255, 255, 255, 0.2);
-            transform: rotate(30deg);
-            transition: all 0.6s ease;
-        }
-
-        .btn-premium:hover::after { left: 150%; }
-
-        /* --- Features Section --- */
-        .features {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            max-width: 500px;
-            margin: 40px auto 50px;
-            padding: 0 10px;
-        }
-
-        .f-card {
-            background: var(--bg-card);
-            padding: 20px 15px;
-            border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: border-color 0.3s ease;
-            cursor: default;
-        }
-
-        .f-card:hover { border-color: var(--accent); }
-
-        .f-icon { font-size: 28px; margin-bottom: 10px; display: block; }
-        
-        .f-card h3 { 
-            font-size: 14px; color: var(--gold); 
-            margin: 0 0 5px; font-weight: 700;
-            letter-spacing: 0.5px;
-        }
-        
-        .f-card p { font-size: 11px; color: var(--text-muted); margin: 0; line-height: 1.4; }
-
-        /* --- Footer Section --- */
-        .footer {
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 30px 20px;
-            background: rgba(0, 0, 0, 0.3);
-        }
-
-        .footer-links { margin-bottom: 15px; }
-        
-        .footer-links a {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 12px;
-            margin: 0 10px;
-            font-weight: 500;
-        }
-
-        .footer-links a:hover { color: white; }
-
-        .strict-warning {
-            font-size: 11px;
-            color: #ff3d4d;
-            background: rgba(255, 61, 77, 0.08);
-            border: 1px solid rgba(255, 61, 77, 0.2);
-            padding: 8px 15px;
-            border-radius: 8px;
-            display: inline-block;
-            margin-top: 10px;
-            font-weight: 600;
-        }
-
-        /* --- Animations --- */
-        @keyframes logoFloat {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-8px); }
-        }
-
-        /* --- Responsive Mobile First --- */
-        @media (min-width: 540px) {
-            h1 { font-size: 42px; }
-            .main-logo { height: 140px; }
-            .hero-p { font-size: 16px; }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#f4f7fc" />
+  <meta name="description" content="RTS Ludo Battle Arena — ludo battles, rooms aur gameplay ke liye RTS Ludo par aage badhein." />
+  <title>RTS Ludo | Battle Arena</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f4f7fc;
+      --card: #ffffff;
+      --card-2: #f8faff;
+      --text: #17243b;
+      --muted: #64748b;
+      --line: #dce5f1;
+      --accent: #2563eb;
+      --accent-2: #3b82f6;
+      --gold-1: #dbeafe;
+      --gold-2: #bfdbfe;
+      --ok: #15803d;
+      --shadow: 0 10px 30px rgba(27, 50, 83, .07);
+    }
+    * { box-sizing: border-box; }
+    html { min-height: 100%; background: var(--bg); scroll-behavior: smooth; }
+    body {
+      margin: 0; min-height: 100vh; overflow-x: hidden;
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      color: var(--text); background: linear-gradient(180deg, #edf4ff 0, #f7f9fd 280px, var(--bg) 100%);
+      -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+      animation: pageFadeIn .24s ease-out both;
+    }
+    a { -webkit-tap-highlight-color: transparent; }
+    .page { width: min(100%, 760px); min-height: 100vh; margin: 0 auto; background: rgba(255,255,255,.38); border-left: 1px solid #e6edf7; border-right: 1px solid #e6edf7; }
+    .topbar { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 18px; background:rgba(255,255,255,.92); border-bottom:1px solid var(--line); box-shadow:0 4px 18px rgba(28,55,96,.045); backdrop-filter:blur(14px); }
+    .brand { display:flex; align-items:center; gap:10px; min-width:0; color:var(--text); text-decoration:none; font-weight:800; letter-spacing:-.03em; }
+    .brand-mark { display:grid; place-items:center; width:38px; height:38px; border-radius:12px; color:#fff; background:linear-gradient(135deg,var(--accent),var(--accent-2)); box-shadow:0 5px 12px rgba(37,99,235,.2); font-size:19px; }
+    .brand-name { font-size:15px; white-space:nowrap; }
+    .top-badge { display:inline-flex; align-items:center; gap:7px; padding:7px 10px; border:1px solid #dce5f1; border-radius:999px; color:#52647d; background:#fff; font-size:11px; font-weight:700; white-space:nowrap; }
+    .online-dot { width:7px; height:7px; border-radius:50%; background:#16a34a; box-shadow:0 0 0 3px rgba(22,163,74,.12); }
+    .hero { position:relative; text-align:center; padding:46px 22px 28px; overflow:hidden; }
+    .hero::before { content:""; position:absolute; z-index:0; width:280px; height:280px; top:-145px; left:50%; transform:translateX(-50%); background:rgba(59,130,246,.12); filter:blur(8px); border-radius:50%; pointer-events:none; }
+    .hero > * { position:relative; z-index:1; }
+    .logo-wrap { position:relative; display:inline-grid; place-items:center; margin:0 auto 20px; }
+    .logo-frame { display:grid; place-items:center; width:108px; height:108px; border-radius:28px; background:linear-gradient(145deg,#fff,#eaf2ff); border:1px solid #d7e5fb; box-shadow:0 12px 30px rgba(37,99,235,.13), inset 0 1px 0 #fff; animation:float 4s ease-in-out infinite; overflow:hidden; }
+    .main-logo { width:100%; height:100%; object-fit:contain; padding:8px; }
+    .logo-fallback { display:none; color:#2563eb; font-size:38px; font-weight:800; }
+    .premium-tag { position:absolute; top:-7px; right:-28px; padding:5px 9px; border-radius:999px; color:#1d4ed8; background:linear-gradient(135deg,#dbeafe,#bfdbfe); border:1px solid #bfdbfe; font-size:9px; font-weight:800; letter-spacing:.07em; }
+    .eyebrow { display:inline-flex; align-items:center; gap:7px; padding:7px 11px; border-radius:999px; border:1px solid #dbeafe; color:#1d4ed8; background:#eff6ff; font-size:11px; font-weight:800; letter-spacing:.07em; text-transform:uppercase; }
+    h1 { max-width:620px; margin:17px auto 13px; color:#17243b; font-size:clamp(29px,6vw,43px); line-height:1.13; font-weight:800; letter-spacing:-.055em; }
+    h1 span { color:#2563eb; }
+    .hero-p { max-width:490px; margin:0 auto 25px; color:var(--muted); font-size:14px; line-height:1.8; }
+    .cta-row { display:flex; justify-content:center; align-items:center; flex-wrap:wrap; gap:10px; }
+    .btn { display:inline-flex; align-items:center; justify-content:center; gap:9px; min-height:48px; padding:13px 22px; border:1px solid transparent; border-radius:13px; text-decoration:none; font:800 14px/1.2 'Plus Jakarta Sans',sans-serif; cursor:pointer; transition:transform .16s ease, box-shadow .16s ease, background .16s ease; -webkit-tap-highlight-color:transparent; }
+    .btn-primary { color:#fff; background:linear-gradient(135deg,#2563eb,#3b82f6); box-shadow:0 6px 16px rgba(37,99,235,.2); }
+    .btn-primary:hover { background:linear-gradient(135deg,#1d4ed8,#2563eb); box-shadow:0 9px 20px rgba(37,99,235,.23); }
+    .btn-secondary { color:#334761; background:#fff; border-color:#d7e1ef; box-shadow:0 2px 6px rgba(30,64,120,.04); }
+    .btn-secondary:hover { background:#f1f6ff; }
+    .btn:active { transform:scale(.975); }
+    .trust-note { display:flex; justify-content:center; flex-wrap:wrap; gap:9px 16px; margin-top:20px; color:#64748b; font-size:11px; font-weight:600; }
+    .trust-note span { display:inline-flex; align-items:center; gap:5px; }
+    .content { padding:0 18px 26px; }
+    .section-heading { text-align:center; margin:16px 0 18px; }
+    .section-heading h2 { margin:0 0 7px; color:#17243b; font-size:22px; letter-spacing:-.04em; }
+    .section-heading p { margin:0; color:var(--muted); font-size:12px; line-height:1.6; }
+    .features { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; max-width:590px; margin:0 auto 28px; }
+    .f-card { min-width:0; padding:17px 14px; border:1px solid #e0e8f3; border-radius:16px; background:linear-gradient(160deg,#fff,#f8faff); box-shadow:0 5px 18px rgba(27,50,83,.045); text-align:left; transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease; }
+    .f-card:hover { transform:translateY(-2px); border-color:#c8d8ef; box-shadow:0 8px 24px rgba(27,50,83,.075); }
+    .f-icon { display:grid; place-items:center; width:40px; height:40px; margin-bottom:13px; border:1px solid #dbeafe; border-radius:12px; background:#eff6ff; font-size:21px; }
+    .f-card h3 { margin:0 0 6px; color:#203451; font-size:13px; font-weight:800; letter-spacing:-.02em; }
+    .f-card p { margin:0; color:#64748b; font-size:11px; line-height:1.65; }
+    .how-card { max-width:590px; margin:0 auto 28px; padding:18px; border:1px solid #e0e8f3; border-radius:17px; background:#fff; box-shadow:0 5px 18px rgba(27,50,83,.045); text-align:left; }
+    .step { display:flex; gap:12px; align-items:flex-start; padding:11px 0; }
+    .step + .step { border-top:1px solid #edf1f7; }
+    .step-num { flex:0 0 30px; display:grid; place-items:center; width:30px; height:30px; border-radius:10px; color:#1d4ed8; background:#eff6ff; border:1px solid #dbeafe; font-size:12px; font-weight:800; }
+    .step strong { display:block; margin:1px 0 4px; color:#203451; font-size:13px; }
+    .step p { margin:0; color:#64748b; font-size:11px; line-height:1.6; }
+    .bottom-cta { margin:0 auto 25px; padding:22px 16px; max-width:590px; border:1px solid #d7e5fb; border-radius:18px; background:linear-gradient(135deg,#eff6ff,#fff); text-align:center; }
+    .bottom-cta h2 { margin:0 0 8px; font-size:20px; letter-spacing:-.04em; }
+    .bottom-cta p { margin:0 0 16px; color:var(--muted); font-size:12px; line-height:1.6; }
+    .footer { padding:23px 18px 28px; border-top:1px solid var(--line); background:rgba(255,255,255,.72); text-align:center; }
+    .footer-links { display:flex; flex-wrap:wrap; justify-content:center; gap:10px 20px; margin-bottom:13px; }
+    .footer-links a { color:#52647d; text-decoration:none; font-size:11px; font-weight:700; }
+    .footer-links a:hover { color:#2563eb; }
+    .copyright { margin:0 0 10px; color:#8290a5; font-size:10px; }
+    .age-note { display:inline-block; max-width:100%; padding:8px 11px; border:1px solid #fed7aa; border-radius:10px; color:#9a3412; background:#fff7ed; font-size:10px; line-height:1.5; font-weight:700; }
+    @keyframes float { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-5px); } }
+    @keyframes pageFadeIn { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:translateY(0); } }
+    @media (min-width:600px) { .hero { padding-top:54px; } .logo-frame { width:120px; height:120px; } .content { padding-left:24px; padding-right:24px; } .features { gap:14px; } .f-card { padding:20px; } }
+    @media (max-width:360px) { .topbar { padding:11px 12px; } .brand-name { font-size:13px; } .top-badge { font-size:10px; padding:6px 8px; } .hero { padding:35px 15px 24px; } .hero-p { font-size:13px; } .btn { width:100%; } .features { gap:9px; } .f-card { padding:14px 11px; } .f-card h3 { font-size:12px; } .f-card p { font-size:10px; } .premium-tag { right:-23px; } }
+    @media (prefers-reduced-motion:reduce) { *,*::before,*::after { animation-duration:.01ms !important; animation-iteration-count:1 !important; scroll-behavior:auto !important; transition-duration:.01ms !important; } }
+  </style>
 </head>
 <body>
+  <div class="page">
+    <header class="topbar">
+      <a class="brand" href="index.html" aria-label="RTS Ludo home">
+        <span class="brand-mark" aria-hidden="true">🎲</span>
+        <span class="brand-name">RTS LUDO</span>
+      </a>
+      <span class="top-badge"><span class="online-dot"></span> BATTLE ARENA</span>
+    </header>
 
-    <div class="main-container">
-        <header class="hero">
-            <div class="logo-container">
-                <img RTSc="logo.png" alt="RTS Ludo Logo" class="main-logo">
-                <span class="premium-tag">PREMIUM</span>
-            </div>
-            
-            <h1>RTS LUDO Battle Arena</h1>
-            
-            <p class="hero-p">
-                भारत का सबसे भरोसेमंद और रोमांचक लूडो प्लेटफॉर्म। अपनी स्किल्स दिखाएं, दोस्तों से मुकाबला करें और बनें असली लूडो मास्टर।
-            </p>
-            
-            <a href="app.html" class="btn-premium">
-                LOGIN NOW ➔
-            </a>
-        </header>
+    <main>
+      <section class="hero">
+        <div class="logo-wrap">
+          <div class="logo-frame">
+            <img src="logo.png" alt="RTS Ludo Logo" class="main-logo" onerror="this.style.display='none';this.nextElementSibling.style.display='block';" />
+            <span class="logo-fallback" aria-hidden="true">RTS</span>
+          </div>
+          <span class="premium-tag">PREMIUM</span>
+        </div>
+        <div><span class="eyebrow">♟ Ludo Battle Arena</span></div>
+        <h1>RTS LUDO <span>Battle Arena</span></h1>
+        <p class="hero-p">Apni Ludo skills ko challenge karein, doston ke saath battles mein shamil hon aur RTS Ludo ke gaming experience ko explore karein.</p>
+        <div class="cta-row">
+          <a href="app.html" class="btn btn-primary">LOGIN NOW <span aria-hidden="true">➜</span></a>
+          <a href="battles.html" class="btn btn-secondary">Explore Battles</a>
+        </div>
+        <div class="trust-note">
+          <span>✓ Easy access</span>
+          <span>✓ Mobile-friendly</span>
+          <span>✓ Clear game flow</span>
+        </div>
+      </section>
 
-        <section class="features">
-            <div class="f-card">
-                <span class="f-icon">🛡️</span>
-                <h3>100% Secure</h3>
-                <p>Advanced anti-cheat and safe data handling.</p>
-            </div>
-            <div class="f-card">
-                <span class="f-icon">⚡</span>
-                <h3>Instant Play</h3>
-                <p>No waiting, start playing in seconds.</p>
-            </div>
-            <div class="f-card">
-                <span class="f-icon">🏆</span>
-                <h3>Premium Gameplay</h3>
-                <p>Smooth graphics and iconic ludo interface.</p>
-            </div>
-            <div class="f-card">
-                <span class="f-icon">📞</span>
-                <h3>24/7 Support</h3>
-                <p>Our team is always here for your help.</p>
-            </div>
+      <section class="content" aria-labelledby="features-title">
+        <div class="section-heading">
+          <h2 id="features-title">RTS Ludo Features</h2>
+          <p>Simple interface, smooth navigation aur game ke liye zaroori tools.</p>
+        </div>
+        <div class="features">
+          <article class="f-card">
+            <span class="f-icon" aria-hidden="true">🛡️</span>
+            <h3>Account & Safety</h3>
+            <p>Apne account ki details secure rakhein aur unknown logon ke saath passwords ya OTP share na karein.</p>
+          </article>
+          <article class="f-card">
+            <span class="f-icon" aria-hidden="true">⚡</span>
+            <h3>Quick Access</h3>
+            <p>Login page se apne account aur available game sections tak aasani se pahunchein.</p>
+          </article>
+          <article class="f-card">
+            <span class="f-icon" aria-hidden="true">🏆</span>
+            <h3>Battle Rooms</h3>
+            <p>Available battles dekhein aur room details ko dhyan se verify karke aage badhein.</p>
+          </article>
+          <article class="f-card">
+            <span class="f-icon" aria-hidden="true">📱</span>
+            <h3>Responsive Design</h3>
+            <p>Mobile, tablet aur desktop screens ke liye banaya gaya clean interface.</p>
+          </article>
+        </div>
+
+        <div class="section-heading">
+          <h2>Start Kaise Karein?</h2>
+          <p>Shuru karne ke liye ye simple steps follow karein.</p>
+        </div>
+        <div class="how-card">
+          <div class="step"><span class="step-num">1</span><div><strong>Login karein</strong><p>Login page kholkar apne account ke through sign in karein.</p></div></div>
+          <div class="step"><span class="step-num">2</span><div><strong>Battle details dekhein</strong><p>Available room ki entry, rules aur details ko join karne se pehle check karein.</p></div></div>
+          <div class="step"><span class="step-num">3</span><div><strong>Responsible gaming</strong><p>Sirf tabhi participate karein jab aap eligible hon aur applicable local laws aur platform rules iski permission dete hon.</p></div></div>
+        </div>
+
+        <section class="bottom-cta">
+          <h2>Ready to Enter the Arena?</h2>
+          <p>RTS Ludo par aage badhne ke liye login karein.</p>
+          <a href="app.html" class="btn btn-primary">Continue to Login <span aria-hidden="true">➜</span></a>
         </section>
+      </section>
+    </main>
 
-        <footer class="footer">
-            <div class="footer-links">
-                <a href="privacy.html">Privacy Policy</a>
-                <a href="terms.html">Terms of Service</a>
-            </div>
-            
-            <p style="font-size: 11px; color: var(--text-muted); margin: 0 0 10px;">
-                © 2024 RTS Ludo Inc. All Rights Reserved.
-            </p>
-            
-            <div class="strict-warning">
-                STRICTLY 18+ | Not for residents of Assam, Odisha, and Restricted States.
-            </div>
-        </footer>
-    </div>
-
+    <footer class="footer">
+      <nav class="footer-links" aria-label="Legal links">
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="terms.html">Terms of Service</a>
+        <a href="battles.html">Battles</a>
+      </nav>
+      <p class="copyright">© <span id="year"></span> RTS Ludo. All rights reserved.</p>
+      <div class="age-note">18+ only where legally permitted. Gaming rules and eligibility vary by location. Please follow applicable laws and play responsibly.</div>
+    </footer>
+  </div>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>
