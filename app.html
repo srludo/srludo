@@ -269,6 +269,36 @@
       *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
     }
 
+  
+    /* FINAL shared RTS LUDO Battles theme overrides */
+    :root { color-scheme: dark; --bg:#040913; --card:#0d1b33; --card-dark:#0d1b33; --text:#e8efff; --text-dark:#e8efff; --muted:#9fb0d1; --line:rgba(255,255,255,.08); --accent:#2f7bff; --gold-1:#a86b00; --gold-2:#ffd05a; }
+    body, .app { background-color:#040913; }
+    .app { background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,0)) !important; }
+    .login-screen { background:radial-gradient(1200px 500px at 50% -200px,#154b99 0%,#040913 65%) !important; }
+    .login-card { background:linear-gradient(160deg,#102340 0%,#0a172b 100%) !important; color:#e8efff !important; border:1px solid rgba(255,255,255,.09) !important; }
+    .login-card p { color:#e8efff !important; }
+    .login-card > div:first-of-type { background:#08152a !important; border:1px solid rgba(255,255,255,.08); }
+    #tabLogin, #tabSignup { color:#e8efff; }
+    .login-input { background:#08152a !important; color:#e8efff !important; border-color:rgba(255,255,255,.13) !important; }
+    .terms-row { color:#9fb0d1 !important; }
+    .terms-row a { color:#69a1ff !important; }
+    .sticky-header { background:rgba(4,9,19,.94) !important; }
+    .announcement { background:linear-gradient(135deg,#102340,#0b172a) !important; color:#e8efff !important; }
+    .game-card { background:linear-gradient(160deg,#102340,#0a172b) !important; border-color:rgba(255,255,255,.08) !important; }
+    .game-label { background:#0d1b33 !important; color:#e8efff !important; }
+    .game-card .img-wrap[style*="background:#f8fafc"] { background:#0d1b33 !important; }
+    .live-tag { background:#0d1b33 !important; color:#ff6572 !important; border:1px solid rgba(255,255,255,.12); }
+    .bottom-nav { background:rgba(4,9,19,.97) !important; border-top-color:rgba(255,255,255,.08) !important; }
+    .nav-item { color:#9fb0d1 !important; }
+    .nav-item.active { color:#69a1ff !important; }
+    .sidebar { background:#09172d !important; }
+    .modal { background:#0a1a32 !important; color:#e8efff !important; }
+    .record { background:rgba(255,255,255,.05) !important; color:#e8efff !important; }
+    #dashboard > div[style*="background:white"], #dashboard > div[style*="background: white"] { background:#0d1b33 !important; color:#e8efff !important; border-color:rgba(255,255,255,.08) !important; }
+    #dashboard > div[style*="background:white"] p, #dashboard > div[style*="background: white"] p { color:#9fb0d1 !important; }
+    #myReferralLink { background:#08152a !important; color:#dce8ff !important; border-color:rgba(47,123,255,.5) !important; }
+    @media (max-width:380px) { .login-card { padding:24px 16px !important; } .wallets { gap:5px !important; } .pill { width:clamp(76px,22vw,98px) !important; } }
+
   </style>
 </head>
 <body>
