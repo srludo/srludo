@@ -93,6 +93,58 @@
     @media (min-width:600px) { .hero { padding-top:54px; } .logo-frame { width:120px; height:120px; } .content { padding-left:24px; padding-right:24px; } .features { gap:14px; } .f-card { padding:20px; } }
     @media (max-width:360px) { .topbar { padding:11px 12px; } .brand-name { font-size:13px; } .top-badge { font-size:10px; padding:6px 8px; } .hero { padding:35px 15px 24px; } .hero-p { font-size:13px; } .btn { width:100%; } .features { gap:9px; } .f-card { padding:14px 11px; } .f-card h3 { font-size:12px; } .f-card p { font-size:10px; } .premium-tag { right:-23px; } }
     @media (prefers-reduced-motion:reduce) { *,*::before,*::after { animation-duration:.01ms !important; animation-iteration-count:1 !important; scroll-behavior:auto !important; transition-duration:.01ms !important; } }
+  
+    /* Exact light-blue theme aligned with battles.html */
+    :root { color-scheme:light; --bg:#f4f7fc; --card:#fff; --card-2:#f8faff; --text:#17243b; --muted:#64748b; --line:#dce5f1; --accent:#2563eb; --accent-2:#3b82f6; --gold-1:#dbeafe; --gold-2:#bfdbfe; --ok:#15803d; --shadow:0 5px 18px rgba(27,50,83,.045); }
+    html { background:#f4f7fc !important; }
+    body { color:#17243b !important; background:linear-gradient(180deg,#edf4ff 0,#f7f9fd 280px,#f4f7fc 100%) !important; }
+    .page { background:transparent !important; border-color:#e6edf7 !important; }
+    .topbar { background:rgba(255,255,255,.92) !important; border-bottom-color:#dce5f1 !important; box-shadow:0 4px 18px rgba(28,55,96,.045) !important; }
+    .brand { color:#17243b !important; }
+    .brand-mark { background:linear-gradient(135deg,#2563eb,#3b82f6) !important; box-shadow:0 5px 15px rgba(37,99,235,.18) !important; }
+    .top-badge { color:#1d4ed8 !important; background:#eff6ff !important; border-color:#dbeafe !important; }
+    .hero::before { background:rgba(59,130,246,.12) !important; }
+    .logo-frame { background:linear-gradient(145deg,#fff,#eaf2ff) !important; border-color:#d7e5fb !important; box-shadow:0 12px 30px rgba(37,99,235,.13),inset 0 1px 0 #fff !important; }
+    .logo-fallback { color:#2563eb !important; }
+    .premium-tag { color:#1d4ed8 !important; background:linear-gradient(135deg,#dbeafe,#bfdbfe) !important; border-color:#bfdbfe !important; }
+    .eyebrow { color:#1d4ed8 !important; background:#eff6ff !important; border-color:#dbeafe !important; }
+    h1 { color:#17243b !important; background:none !important; -webkit-text-fill-color:initial !important; }
+    h1 span { color:#2563eb !important; -webkit-text-fill-color:#2563eb !important; }
+    .hero-p,.trust-note,.section-heading p,.bottom-cta p { color:#64748b !important; }
+    .btn-primary { color:#fff !important; background:linear-gradient(135deg,#2563eb,#3b82f6) !important; box-shadow:0 4px 10px rgba(37,99,235,.14) !important; }
+    .btn-primary:hover { background:linear-gradient(135deg,#1d4ed8,#2563eb) !important; }
+    .btn-secondary { color:#334761 !important; background:#fff !important; border-color:#d7e1ef !important; box-shadow:0 2px 6px rgba(30,64,120,.04) !important; }
+    .btn-secondary:hover { background:#f1f6ff !important; }
+    .section-heading h2,.bottom-cta h2 { color:#17243b !important; }
+    .f-card { background:linear-gradient(160deg,#fff,#f8faff) !important; border-color:#e0e8f3 !important; box-shadow:0 5px 18px rgba(27,50,83,.045) !important; }
+    .f-card:hover { border-color:#c8d8ef !important; box-shadow:0 8px 24px rgba(27,50,83,.075) !important; }
+    .f-icon,.step-num { color:#1d4ed8 !important; background:#eff6ff !important; border-color:#dbeafe !important; }
+    .f-card h3,.step strong { color:#203451 !important; }
+    .f-card p,.step p { color:#64748b !important; }
+    .how-card { background:#fff !important; border-color:#e0e8f3 !important; box-shadow:0 5px 18px rgba(27,50,83,.045) !important; }
+    .step + .step { border-top-color:#edf1f7 !important; }
+    .bottom-cta { background:linear-gradient(135deg,#eff6ff,#fff) !important; border-color:#d7e5fb !important; }
+    .footer { background:rgba(255,255,255,.72) !important; border-top-color:#dce5f1 !important; }
+    .footer-links a { color:#52647d !important; }
+    .footer-links a:hover { color:#2563eb !important; }
+    .copyright { color:#8290a5 !important; }
+
+
+    /* APK download popup — matching the existing light-blue theme */
+    .apk-modal-backdrop { position:fixed; inset:0; z-index:9998; display:none; align-items:center; justify-content:center; padding:18px; background:rgba(23,36,59,.48); backdrop-filter:blur(5px); }
+    .apk-modal-backdrop.is-open { display:flex; }
+    .apk-modal { position:relative; width:min(100%,390px); padding:26px 22px 22px; border:1px solid #dce8f8; border-radius:22px; background:linear-gradient(160deg,#fff 0%,#f6f9ff 100%); box-shadow:0 24px 70px rgba(24,49,87,.22); text-align:center; animation:apkPopIn .22s ease-out both; }
+    .apk-close { position:absolute; top:10px; right:11px; display:grid; place-items:center; width:34px; height:34px; border:1px solid #e0e8f3; border-radius:50%; color:#52647d; background:#fff; font-size:21px; cursor:pointer; }
+    .apk-icon { display:grid; place-items:center; width:64px; height:64px; margin:0 auto 14px; border:1px solid #dbeafe; border-radius:19px; background:linear-gradient(145deg,#eff6ff,#dbeafe); font-size:30px; }
+    .apk-modal h2 { margin:0 22px 9px; color:#17243b; font-size:23px; line-height:1.2; letter-spacing:-.04em; }
+    .apk-modal p { margin:0 auto 18px; max-width:300px; color:#64748b; font-size:13px; line-height:1.65; }
+    .apk-modal-actions { display:grid; gap:9px; }
+    .apk-download-btn { width:100%; min-height:48px; display:inline-flex; justify-content:center; align-items:center; gap:9px; padding:13px 18px; border:0; border-radius:13px; color:#fff; background:linear-gradient(135deg,#2563eb,#3b82f6); box-shadow:0 6px 16px rgba(37,99,235,.2); text-decoration:none; font:800 14px/1.2 'Plus Jakarta Sans',sans-serif; cursor:pointer; }
+    .apk-later-btn { min-height:43px; border:1px solid #d7e1ef; border-radius:13px; color:#334761; background:#fff; font:700 13px 'Plus Jakarta Sans',sans-serif; cursor:pointer; }
+    .apk-fineprint { display:block; margin-top:13px; color:#8290a5; font-size:10px; line-height:1.5; }
+    @keyframes apkPopIn { from { opacity:0; transform:translateY(8px) scale(.97); } to { opacity:1; transform:translateY(0) scale(1); } }
+    @media (prefers-reduced-motion:reduce) { .apk-modal { animation:none; } }
+
   </style>
 </head>
 <body>
@@ -184,8 +236,51 @@
       <div class="age-note">18+ only where legally permitted. Gaming rules and eligibility vary by location. Please follow applicable laws and play responsibly.</div>
     </footer>
   </div>
+
+  <div id="apkModalBackdrop" class="apk-modal-backdrop" aria-hidden="true">
+    <section class="apk-modal" role="dialog" aria-modal="true" aria-labelledby="apkModalTitle" aria-describedby="apkModalDescription">
+      <button class="apk-close" id="apkModalClose" type="button" aria-label="Close download popup">×</button>
+      <div class="apk-icon" aria-hidden="true">📲</div>
+      <h2 id="apkModalTitle">Get RTS LUDO App</h2>
+      <p id="apkModalDescription">Download the RTS LUDO Android app for quick access. Only install APK files you trust.</p>
+      <div class="apk-modal-actions">
+        <a class="apk-download-btn" href="rts-ludo.apk" download>⬇ Download APK</a>
+        <button class="apk-later-btn" id="apkModalLater" type="button">Maybe Later</button>
+      </div>
+      <small class="apk-fineprint">Android may ask you to confirm installation from this source.</small>
+    </section>
+  </div>
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
+
+    const apkModalBackdrop = document.getElementById('apkModalBackdrop');
+    const closeApkModal = () => {
+      apkModalBackdrop.classList.remove('is-open');
+      apkModalBackdrop.setAttribute('aria-hidden', 'true');
+    };
+    // Show once per browser tab session so it does not repeatedly interrupt navigation.
+    try {
+      if (!sessionStorage.getItem('rtsApkPopupShown')) {
+        window.setTimeout(() => {
+          apkModalBackdrop.classList.add('is-open');
+          apkModalBackdrop.setAttribute('aria-hidden', 'false');
+          sessionStorage.setItem('rtsApkPopupShown', '1');
+        }, 700);
+      }
+    } catch (_) {
+      window.setTimeout(() => {
+        apkModalBackdrop.classList.add('is-open');
+        apkModalBackdrop.setAttribute('aria-hidden', 'false');
+      }, 700);
+    }
+    document.getElementById('apkModalClose').addEventListener('click', closeApkModal);
+    document.getElementById('apkModalLater').addEventListener('click', closeApkModal);
+    apkModalBackdrop.addEventListener('click', (event) => {
+      if (event.target === apkModalBackdrop) closeApkModal();
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') closeApkModal();
+    });
   </script>
 </body>
 </html>
